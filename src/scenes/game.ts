@@ -1,6 +1,7 @@
 ﻿import * as Phaser from "phaser";
 
 type WalkAnimState = 'walk_front' | 'walk_back' | 'walk_left' | 'walk_right' | ''
+type MoveDir = -1 | 0 | 1 // 追加
 
 export class Game extends Phaser.Scene {
   private map?: Phaser.Tilemaps.Tilemap
@@ -9,6 +10,8 @@ export class Game extends Phaser.Scene {
   private player?: Phaser.GameObjects.Sprite
   private playerAnimState: WalkAnimState
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
+  private playerIsWalking: boolean
+  private playerWalkSpeed: number = 40
 
   private map_ground: number[][] = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -40,6 +43,7 @@ export class Game extends Phaser.Scene {
     console.log("Game Main");
     this.cursors = this.input.keyboard.createCursorKeys();
     this.playerAnimState = ''
+    this.playerIsWalking = false
   }
 
   preload() {
@@ -64,18 +68,24 @@ export class Game extends Phaser.Scene {
   }
 
   update() {
-    console.log('update')
+    if(this.playerIsWalking) return // 追加
 
     let playerAnimState: WalkAnimState = ''
+    let playerXDir: MoveDir = 0  // x座標の移動方向を表すための変数
+    let playerYDir: MoveDir = 0  // y座標の移動方向を表すための変数
 
     if(this.cursors.up.isDown){ 
       playerAnimState = 'walk_back'
+      playerYDir = -1
     }else if(this.cursors.down.isDown){
       playerAnimState = 'walk_front'
+      playerYDir = 1
     }else if(this.cursors.left.isDown){
       playerAnimState = 'walk_left'
+      playerXDir = -1
     }else if(this.cursors.right.isDown){
       playerAnimState = 'walk_right'
+      playerXDir = 1
     }else{
       this.player.anims.stop()
       this.playerAnimState = ''
@@ -87,6 +97,11 @@ export class Game extends Phaser.Scene {
       this.player.anims.play(playerAnimState)
       this.playerAnimState = playerAnimState
     }
+
+    this.playerIsWalking = true
+    this.gridWalkTween(this.player, this.playerWalkSpeed, playerXDir, playerYDir, () => {
+      this.playerIsWalking = false
+    })
   }
 
   private playerAnimConfig(config: {key: string, frameStart: number, frameEnd: number}): Phaser.Types.Animations.Animation {
@@ -102,5 +117,38 @@ export class Game extends Phaser.Scene {
       frameRate: 8,
       repeat: -1
     }
+  }
+
+  private gridWalkTween(
+    target: any,
+    baseSpeed: number,
+    xDir: MoveDir,
+    yDir: MoveDir,
+    onComplete: () => void
+  ){
+    if(target.x === false) return 
+    if(target.y === false) return
+
+    const tween: Phaser.Tweens.Tween = this.add.tween({
+      // 対象のオブジェクト
+      targets: [target],
+      // X座標の移動を設定
+      x: {
+        getStart: () => target.x,
+        getEnd: () => target.x + (baseSpeed * xDir)
+      },
+      // X座標の移動を設定
+      y: {
+        getStart: () => target.y,
+        getEnd: () => target.y + (baseSpeed * yDir)
+      },
+      // アニメーションの時間
+      duration: 300,
+      // アニメーション終了時に発火するコールバック
+      onComplete: () => {
+        tween.stop() // Tweenオブジェクトの削除
+        onComplete() // 引数の関数実行
+      }
+    })
   }
 }

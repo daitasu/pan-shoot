@@ -6,12 +6,13 @@ type MoveDir = -1 | 0 | 1 // 追加
 export class Game extends Phaser.Scene {
   private map?: Phaser.Tilemaps.Tilemap
   private tiles?: Phaser.Tilemaps.Tileset
-  private map_ground_layer?: any
+  private map_ground_layer?: Phaser.Tilemaps.TilemapLayer
   private player?: Phaser.GameObjects.Sprite
   private playerAnimState: WalkAnimState
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys
   private playerIsWalking: boolean
   private playerWalkSpeed: number = 40
+  private playerTilePos: {tx: number, ty: number}
 
   private map_ground: number[][] = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -44,6 +45,9 @@ export class Game extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.playerAnimState = ''
     this.playerIsWalking = false
+    
+    // player 初期位置をタイル基準で設定
+    this.playerTilePos = {tx: 10, ty: 8}
   }
 
   preload() {
@@ -52,12 +56,18 @@ export class Game extends Phaser.Scene {
   }
 
   create() {
+
+    let playerPos: Phaser.Math.Vector2
+
     // map の読み込み
     this.map = this.make.tilemap({ data: this.map_ground, tileWidth: 40, tileHeight: 40 })
     this.tiles = this.map.addTilesetImage('mapTiles')
     this.map_ground_layer = this.map.createLayer(0, this.tiles, 0, 0)
 
-    this.player = this.add.sprite(420, 300, 'hero', 10)
+    playerPos = this.map_ground_layer.tileToWorldXY(this.playerTilePos.tx, this.playerTilePos.ty)
+
+    this.player = this.add.sprite(playerPos.x, playerPos.y, 'hero', 0)
+    this.player.setOrigin(0)
     this.player.setDisplaySize(40, 40)
 
     for(let playerAnim of this.playerAnims){ // ヒーローアニメーションの数だけループ

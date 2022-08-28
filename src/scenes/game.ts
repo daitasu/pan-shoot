@@ -83,6 +83,7 @@ export class Game extends Phaser.Scene {
     let playerAnimState: WalkAnimState = ''
     let playerXDir: MoveDir = 0  // x座標の移動方向を表すための変数
     let playerYDir: MoveDir = 0  // y座標の移動方向を表すための変数
+    let playerNewTilePos: {tx: number, ty: number} = this.playerTilePos
 
     if(this.cursors.up.isDown){ 
       playerAnimState = 'walk_back'
@@ -108,6 +109,18 @@ export class Game extends Phaser.Scene {
       this.playerAnimState = playerAnimState
     }
 
+    // 外壁判定
+    playerNewTilePos = {tx: playerNewTilePos.tx + playerXDir, ty: playerNewTilePos.ty + playerYDir}
+
+    if(playerNewTilePos.tx < 0) return 
+    if(playerNewTilePos.ty < 0) return
+    if(playerNewTilePos.tx >= 20) return 
+    if(playerNewTilePos.ty >= 15) return
+
+    // 静mapの衝突判定
+    if(this.map_ground[playerNewTilePos.ty][playerNewTilePos.tx] == 1) return
+
+    this.playerTilePos = playerNewTilePos
     this.playerIsWalking = true
     this.gridWalkTween(this.player, this.playerWalkSpeed, playerXDir, playerYDir, () => {
       this.playerIsWalking = false

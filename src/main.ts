@@ -35,5 +35,5 @@ export class Main extends Phaser.Game {
 
 //windowイベントで、ロードされたらゲーム開始
 window.addEventListener("load", () => {
-  const GameApp: Phaser.Game = new Main(config);
+  new Main(config);
 });

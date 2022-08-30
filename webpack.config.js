@@ -43,8 +43,8 @@ module.exports = {
     port: 9000,
     open: {
       target: ["public/"],
-    }
-},
+    },
+  },
   resolve: {
     extensions: [".ts", ".js"],
     alias: {
@@ -52,4 +52,3 @@ module.exports = {
     },
   },
 };
-

@@ -8,9 +8,6 @@ export class Preload extends Phaser.Scene {
     console.log("Preloading");
   }
 
-  preload() {
-  }
-
   create() {
     const BK_COLOR = "#101617";
 

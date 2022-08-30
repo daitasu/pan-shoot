@@ -1,5 +1,5 @@
-const express = require("express");
-const basicAuth = require("basic-auth-connect");
+import * as express from "express";
+import * as basicAuth from "basic-auth-connect";
 const app = express();
 
 const gameuser = process.env.GAMEUSER;
@@ -15,4 +15,3 @@ app.use(express.static(__dirname + "/public"));
 app.listen(app.get("port"), function () {
   console.log("Listening on port " + app.get("port"));
 });
-

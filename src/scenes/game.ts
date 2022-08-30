@@ -52,7 +52,7 @@ export class Game extends Phaser.Scene {
 
   preload() {
     this.load.image('mapTiles', `../../public/images/map_tile.png`)
-    this.load.spritesheet('hero', '../../public/images/hero.png', { frameWidth: 32, frameHeight: 32 });
+    this.load.spritesheet('katopan', '../../public/images/katopan.png', { frameWidth: 32, frameHeight: 32 });
   }
 
   create() {
@@ -66,7 +66,7 @@ export class Game extends Phaser.Scene {
 
     playerPos = this.map_ground_layer.tileToWorldXY(this.playerTilePos.tx, this.playerTilePos.ty)
 
-    this.player = this.add.sprite(playerPos.x, playerPos.y, 'hero', 0)
+    this.player = this.add.sprite(playerPos.x, playerPos.y, 'katopan', 0)
     this.player.setOrigin(0)
     this.player.setDisplaySize(40, 40)
 
@@ -131,7 +131,7 @@ export class Game extends Phaser.Scene {
     return {
       key: config.key,
       frames: this.anims.generateFrameNumbers(
-        'hero',
+        'katopan',
         {
           start: config.frameStart,
           end: config.frameEnd

@@ -1,4 +1,8 @@
 ﻿import * as Phaser from "phaser";
+import Enemy from "../entities/Enemy";
+
+export type TilePos = { tx: number; ty: number };
+export type MoveDir = -1 | 0 | 1; // 追加
 
 type WalkAnimState =
   | "walk_front"
@@ -6,13 +10,14 @@ type WalkAnimState =
   | "walk_left"
   | "walk_right"
   | "";
-type MoveDir = -1 | 0 | 1; // 追加
 
 export class Game extends Phaser.Scene {
   private map?: Phaser.Tilemaps.Tilemap;
   private tiles?: Phaser.Tilemaps.Tileset;
   private map_ground_layer?: Phaser.Tilemaps.TilemapLayer;
   private player?: Phaser.GameObjects.Sprite;
+  private enemy?: Enemy;
+
   private playerAnimState: WalkAnimState;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private playerIsWalking: boolean;
@@ -47,7 +52,6 @@ export class Game extends Phaser.Scene {
     ];
 
   init() {
-    console.log("Game Main");
     this.cursors = this.input.keyboard.createCursorKeys();
     this.playerAnimState = "";
     this.playerIsWalking = false;
@@ -59,6 +63,10 @@ export class Game extends Phaser.Scene {
   preload() {
     this.load.image("mapTiles", `../../public/images/map_tile.png`);
     this.load.spritesheet("katopan", "../../public/images/katopan.png", {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+    this.load.spritesheet("demon", "../../public/images/demon.png", {
       frameWidth: 32,
       frameHeight: 32,
     });
@@ -74,6 +82,7 @@ export class Game extends Phaser.Scene {
     this.tiles = this.map.addTilesetImage("mapTiles");
     this.map_ground_layer = this.map.createLayer(0, this.tiles, 0, 0);
 
+    // player
     const playerPos: Phaser.Math.Vector2 = this.map_ground_layer.tileToWorldXY(
       this.playerTilePos.tx,
       this.playerTilePos.ty
@@ -90,6 +99,9 @@ export class Game extends Phaser.Scene {
     }
 
     this.player.anims.play("walk_stop");
+
+    // enemy
+    this.enemy = new Enemy(this.map_ground_layer, this);
   }
 
   update() {
@@ -149,6 +161,7 @@ export class Game extends Phaser.Scene {
         this.playerIsWalking = false;
       }
     );
+    this.enemy.moveEnemy(playerNewTilePos);
   }
 
   private playerAnimConfig(config: {

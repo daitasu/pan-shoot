@@ -15,6 +15,7 @@ const config: Phaser.Types.Core.GameConfig = {
     },
     mode: Phaser.Scale.FIT,
   },
+  physics: { default: "arcade", arcade: { debug: false, gravity: { y: 0 } } },
   parent: "game",
   type: Phaser.AUTO,
 };

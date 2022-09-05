@@ -1,4 +1,4 @@
-﻿import { MoveDir, TilePos } from "../scenes/game";
+﻿import { TilePos, MoveDir } from "../types/game";
 import { abs } from "../utils/math";
 
 export default class Enemy {

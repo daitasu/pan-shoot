@@ -1,16 +1,7 @@
 ﻿import * as Phaser from "phaser";
 import Enemy from "../entities/Enemy";
 import Map from "../entities/Map";
-
-export type TilePos = { tx: number; ty: number };
-export type MoveDir = -1 | 0 | 1; // 追加
-
-type WalkAnimState =
-  | "walk_front"
-  | "walk_back"
-  | "walk_left"
-  | "walk_right"
-  | "";
+import { WalkAnimState, TilePos, MoveDir } from "../types/game";
 
 export class Game extends Phaser.Scene {
   private player?: Phaser.GameObjects.Sprite;
@@ -21,7 +12,7 @@ export class Game extends Phaser.Scene {
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private playerIsWalking: boolean;
   private playerWalkSpeed = 40;
-  private playerTilePos: { tx: number; ty: number };
+  private playerTilePos: TilePos;
 
   // player アニメーションを配列で設定
   private playerAnims: { key: string; frameStart: number; frameEnd: number }[] =

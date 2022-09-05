@@ -1,5 +1,6 @@
 ﻿import { TilePos, MoveDir } from "../types/game";
 import { abs } from "../utils/math";
+import Player from "./Player";
 
 export default class Enemy {
   private scene: Phaser.Scene;
@@ -25,20 +26,20 @@ export default class Enemy {
     this.enemy.setDisplaySize(40, 40);
   }
 
-  moveEnemy(playerTilePos: TilePos) {
+  moveEnemy(player: Player) {
     if (this.enemyIsWalking) return;
 
     // x, y 方向のうちより遠い距離を詰める
-    const xTileCntToPlayer = abs(playerTilePos.tx - this.enemyTilePos.tx);
-    const yTileCntToPlayer = abs(playerTilePos.ty - this.enemyTilePos.ty);
+    const xTileCntToPlayer = abs(player.tilePos.tx - this.enemyTilePos.tx);
+    const yTileCntToPlayer = abs(player.tilePos.ty - this.enemyTilePos.ty);
 
     if (xTileCntToPlayer > yTileCntToPlayer) {
-      this.setNewPosition(playerTilePos, "tx");
+      this.setNewPosition(player.tilePos, "tx");
     } else if (yTileCntToPlayer > xTileCntToPlayer) {
-      this.setNewPosition(playerTilePos, "ty");
+      this.setNewPosition(player.tilePos, "ty");
     } else {
       this.setNewPosition(
-        playerTilePos,
+        player.tilePos,
         Phaser.Math.Between(0, 1) === 0 ? "tx" : "ty"
       );
     }

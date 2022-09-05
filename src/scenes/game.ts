@@ -1,5 +1,6 @@
 ﻿import * as Phaser from "phaser";
 import Enemy from "../entities/Enemy";
+import Map from "../entities/Map";
 
 export type TilePos = { tx: number; ty: number };
 export type MoveDir = -1 | 0 | 1; // 追加
@@ -12,35 +13,15 @@ type WalkAnimState =
   | "";
 
 export class Game extends Phaser.Scene {
-  private map?: Phaser.Tilemaps.Tilemap;
-  private tiles?: Phaser.Tilemaps.Tileset;
-  private map_ground_layer?: Phaser.Tilemaps.TilemapLayer;
   private player?: Phaser.GameObjects.Sprite;
   private enemy?: Enemy;
+  private map?: Map;
 
   private playerAnimState: WalkAnimState;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private playerIsWalking: boolean;
   private playerWalkSpeed = 40;
   private playerTilePos: { tx: number; ty: number };
-
-  private map_ground: number[][] = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
-  ]; // 20 * 15
 
   // player アニメーションを配列で設定
   private playerAnims: { key: string; frameStart: number; frameEnd: number }[] =
@@ -74,19 +55,14 @@ export class Game extends Phaser.Scene {
 
   create() {
     // map の読み込み
-    this.map = this.make.tilemap({
-      data: this.map_ground,
-      tileWidth: 40,
-      tileHeight: 40,
-    });
-    this.tiles = this.map.addTilesetImage("mapTiles");
-    this.map_ground_layer = this.map.createLayer(0, this.tiles, 0, 0);
+    this.map = new Map(this);
 
     // player
-    const playerPos: Phaser.Math.Vector2 = this.map_ground_layer.tileToWorldXY(
-      this.playerTilePos.tx,
-      this.playerTilePos.ty
-    );
+    const playerPos: Phaser.Math.Vector2 =
+      this.map.mapGroundLayer.tileToWorldXY(
+        this.playerTilePos.tx,
+        this.playerTilePos.ty
+      );
 
     this.player = this.add.sprite(playerPos.x, playerPos.y, "katopan", 0);
     this.player.setOrigin(0);
@@ -101,7 +77,7 @@ export class Game extends Phaser.Scene {
     this.player.anims.play("walk_stop");
 
     // enemy
-    this.enemy = new Enemy(this.map_ground_layer, this);
+    this.enemy = new Enemy(this.map.mapGroundLayer, this);
   }
 
   update() {
@@ -148,7 +124,8 @@ export class Game extends Phaser.Scene {
     if (playerNewTilePos.ty >= 15) return;
 
     // 静mapの衝突判定
-    if (this.map_ground[playerNewTilePos.ty][playerNewTilePos.tx] == 1) return;
+    if (this.map.mapGround[playerNewTilePos.ty][playerNewTilePos.tx] == 1)
+      return;
 
     this.playerTilePos = playerNewTilePos;
     this.playerIsWalking = true;

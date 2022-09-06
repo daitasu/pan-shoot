@@ -1,14 +1,10 @@
 ﻿import { WalkAnimState, TilePos, MoveDirs } from "../types/game";
 import Map from "./Map";
 import { ONE_TILE_SIZE } from "../constants";
+import Sprite from "./Sprite";
 
-export default class Player {
-  private _player?: Phaser.GameObjects.Sprite;
+export default class Player extends Sprite {
   private _animState: WalkAnimState;
-  private _isWalking: boolean;
-  private _walkSpeed = ONE_TILE_SIZE;
-  private _tilePos: TilePos;
-  private scene: Phaser.Scene;
 
   // player アニメーションを配列で設定
   private animations: { key: string; frameStart: number; frameEnd: number }[] =
@@ -23,27 +19,28 @@ export default class Player {
     mapGroundLayer: Phaser.Tilemaps.TilemapLayer,
     scene: Phaser.Scene
   ) {
-    this.scene = scene;
+    super(scene);
+    // this.scene = scene;
 
     this._animState = "";
     this._isWalking = false;
     this._tilePos = { tx: 10, ty: 8 }; // player 初期位置をタイル基準で設定
 
     const playerPos: Phaser.Math.Vector2 = mapGroundLayer.tileToWorldXY(
-      this.tilePos.tx,
-      this.tilePos.ty
+      this._tilePos.tx,
+      this._tilePos.ty
     );
 
-    this._player = scene.add.sprite(playerPos.x, playerPos.y, "katopan", 0);
-    this._player.setOrigin(0);
-    this._player.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);
+    this._sprite = scene.add.sprite(playerPos.x, playerPos.y, "katopan", 0);
+    this._sprite.setOrigin(0);
+    this._sprite.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);
 
     for (const animation of this.animations) {
       // ヒーローアニメーションの数だけループ
       if (scene.anims.create(this.animConfig(animation)) === false) continue; // もしfalseが戻って来ればこの後何もしない
     }
 
-    this._player.anims.play("walk_stop");
+    this._sprite.anims.play("walk_stop");
   }
 
   /*
@@ -63,38 +60,6 @@ export default class Player {
       frameRate: 8,
       repeat: -1,
     };
-  }
-
-  private gridWalkTween(
-    target: any,
-    baseSpeed: number,
-    moveDirs: MoveDirs,
-    onComplete: () => void
-  ) {
-    if (target.x === false) return;
-    if (target.y === false) return;
-
-    const tween: Phaser.Tweens.Tween = this.scene.add.tween({
-      // 対象のオブジェクト
-      targets: [target],
-      // X座標の移動を設定
-      x: {
-        getStart: () => target.x,
-        getEnd: () => target.x + baseSpeed * moveDirs.x,
-      },
-      // X座標の移動を設定
-      y: {
-        getStart: () => target.y,
-        getEnd: () => target.y + baseSpeed * moveDirs.y,
-      },
-      // アニメーションの時間
-      duration: 300,
-      // アニメーション終了時に発火するコールバック
-      onComplete: () => {
-        tween.stop(); // Tweenオブジェクトの削除
-        onComplete(); // 引数の関数実行
-      },
-    });
   }
 
   /*
@@ -119,14 +84,14 @@ export default class Player {
       newAnimState = "walk_right";
       moveDirs.x = 1;
     } else {
-      this._player.anims.stop();
+      this._sprite.anims.stop();
       this._animState = "";
       return;
     }
 
     // 前回と状態が異なればplayer 挙動を変更
     if (this._animState != newAnimState) {
-      this._player.anims.play(newAnimState);
+      this._sprite.anims.play(newAnimState);
       this._animState = newAnimState;
     }
 
@@ -152,7 +117,7 @@ export default class Player {
 
     this._tilePos = newTilePos;
     this._isWalking = true;
-    this.gridWalkTween(this._player, this._walkSpeed, moveDirs, () => {
+    this.gridWalkTween(this._sprite, this._walkSpeed, moveDirs, () => {
       this._isWalking = false;
     });
   }

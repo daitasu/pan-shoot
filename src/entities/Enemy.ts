@@ -1,30 +1,25 @@
 ﻿import { TilePos, MoveDirs } from "../types/game";
 import { abs } from "../utils/math";
 import Player from "./Player";
+import Sprite from "./Sprite";
 import { ONE_TILE_SIZE } from "../constants";
 
-export default class Enemy {
-  private scene: Phaser.Scene;
-  private enemy?: Phaser.GameObjects.Sprite;
-  private _tilePos: { tx: number; ty: number };
-  private walkSpeed = ONE_TILE_SIZE;
-  private _isWalking: boolean;
-
+export default class Enemy extends Sprite {
   constructor(
     mapGroundLayer: Phaser.Tilemaps.TilemapLayer,
     scene: Phaser.Scene
   ) {
-    this.scene = scene;
+    super(scene);
+    this._isWalking = false;
     this._tilePos = { tx: 1, ty: 2 }; // enemy 初期位置をタイル基準で設定
 
     const enemyPos: Phaser.Math.Vector2 = mapGroundLayer.tileToWorldXY(
       this._tilePos.tx,
       this._tilePos.ty
     );
-
-    this.enemy = scene.add.sprite(enemyPos.x, enemyPos.y, "demon", 0);
-    this.enemy.setOrigin(0);
-    this.enemy.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);
+    this._sprite = scene.add.sprite(enemyPos.x, enemyPos.y, "demon", 0);
+    this._sprite.setOrigin(0);
+    this._sprite.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);
   }
 
   moveEnemy(player: Player) {
@@ -69,41 +64,8 @@ export default class Enemy {
 
     this._tilePos = enemyNewTilePos;
 
-    this.gridWalkTween(this.enemy, this.walkSpeed, moveDirs, () => {
+    this.gridWalkTween(this._sprite, this._walkSpeed, moveDirs, () => {
       this._isWalking = false;
-    });
-  }
-
-  private gridWalkTween(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    target: any,
-    baseSpeed: number,
-    moveDirs: MoveDirs,
-    onComplete: () => void
-  ) {
-    if (target.x === false) return;
-    if (target.y === false) return;
-
-    const tween: Phaser.Tweens.Tween = this.scene.add.tween({
-      // 対象のオブジェクト
-      targets: [target],
-      // X座標の移動を設定
-      x: {
-        getStart: () => target.x,
-        getEnd: () => target.x + baseSpeed * moveDirs.x,
-      },
-      // X座標の移動を設定
-      y: {
-        getStart: () => target.y,
-        getEnd: () => target.y + baseSpeed * moveDirs.y,
-      },
-      // アニメーションの時間
-      duration: 300,
-      // アニメーション終了時に発火するコールバック
-      onComplete: () => {
-        tween.stop(); // Tweenオブジェクトの削除
-        onComplete(); // 引数の関数実行
-      },
     });
   }
 }

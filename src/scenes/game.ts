@@ -2,6 +2,7 @@
 import Enemy from "../entities/Enemy";
 import Map from "../entities/Map";
 import Player from "../entities/Player";
+import { SPRITE_FRAME_SIZE } from "../constants";
 
 export class Game extends Phaser.Scene {
   private enemy?: Enemy;
@@ -16,12 +17,12 @@ export class Game extends Phaser.Scene {
   preload() {
     this.load.image("mapTiles", `../../public/images/map_tile.png`);
     this.load.spritesheet("katopan", "../../public/images/katopan.png", {
-      frameWidth: 32,
-      frameHeight: 32,
+      frameWidth: SPRITE_FRAME_SIZE,
+      frameHeight: SPRITE_FRAME_SIZE,
     });
     this.load.spritesheet("demon", "../../public/images/demon.png", {
-      frameWidth: 32,
-      frameHeight: 32,
+      frameWidth: SPRITE_FRAME_SIZE,
+      frameHeight: SPRITE_FRAME_SIZE,
     });
   }
 

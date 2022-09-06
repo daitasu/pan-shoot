@@ -1,13 +1,14 @@
-﻿import { TilePos, MoveDir } from "../types/game";
+﻿import { TilePos, MoveDirs } from "../types/game";
 import { abs } from "../utils/math";
 import Player from "./Player";
+import { ONE_TILE_SIZE } from "../constants";
 
 export default class Enemy {
   private scene: Phaser.Scene;
   private enemy?: Phaser.GameObjects.Sprite;
   private enemyTilePos: { tx: number; ty: number };
-  private enemyWalkSpeed = 40;
   private enemyIsWalking: boolean;
+  private walkSpeed = ONE_TILE_SIZE;
 
   constructor(
     map_ground_layer: Phaser.Tilemaps.TilemapLayer,
@@ -23,7 +24,7 @@ export default class Enemy {
 
     this.enemy = scene.add.sprite(enemyPos.x, enemyPos.y, "demon", 0);
     this.enemy.setOrigin(0);
-    this.enemy.setDisplaySize(40, 40);
+    this.enemy.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);
   }
 
   moveEnemy(player: Player) {

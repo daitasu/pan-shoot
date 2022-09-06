@@ -1,11 +1,12 @@
 ﻿import { WalkAnimState, TilePos, MoveDirs } from "../types/game";
 import Map from "./Map";
+import { ONE_TILE_SIZE } from "../constants";
 
 export default class Player {
   private _player?: Phaser.GameObjects.Sprite;
   private _animState: WalkAnimState;
   private _isWalking: boolean;
-  private _walkSpeed = 40;
+  private _walkSpeed = ONE_TILE_SIZE;
   private _tilePos: TilePos;
   private scene: Phaser.Scene;
 
@@ -35,7 +36,7 @@ export default class Player {
 
     this._player = scene.add.sprite(playerPos.x, playerPos.y, "katopan", 0);
     this._player.setOrigin(0);
-    this._player.setDisplaySize(40, 40);
+    this._player.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);
 
     for (const animation of this.animations) {
       // ヒーローアニメーションの数だけループ

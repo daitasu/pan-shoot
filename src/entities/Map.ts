@@ -1,4 +1,6 @@
-﻿export default class Map {
+﻿import { ONE_TILE_SIZE } from "../constants";
+
+export default class Map {
   private map?: Phaser.Tilemaps.Tilemap;
   private tiles?: Phaser.Tilemaps.Tileset;
   private ground_layer?: Phaser.Tilemaps.TilemapLayer;
@@ -24,8 +26,8 @@
   constructor(scene: Phaser.Scene) {
     this.map = scene.make.tilemap({
       data: this.ground,
-      tileWidth: 40,
-      tileHeight: 40,
+      tileWidth: ONE_TILE_SIZE,
+      tileHeight: ONE_TILE_SIZE,
     });
 
     this.tiles = this.map.addTilesetImage("mapTiles");

@@ -6,20 +6,20 @@ import { ONE_TILE_SIZE } from "../constants";
 export default class Enemy {
   private scene: Phaser.Scene;
   private enemy?: Phaser.GameObjects.Sprite;
-  private enemyTilePos: { tx: number; ty: number };
-  private enemyIsWalking: boolean;
+  private _tilePos: { tx: number; ty: number };
   private walkSpeed = ONE_TILE_SIZE;
+  private _isWalking: boolean;
 
   constructor(
-    map_ground_layer: Phaser.Tilemaps.TilemapLayer,
+    mapGroundLayer: Phaser.Tilemaps.TilemapLayer,
     scene: Phaser.Scene
   ) {
     this.scene = scene;
-    this.enemyTilePos = { tx: 1, ty: 2 }; // enemy 初期位置をタイル基準で設定
+    this._tilePos = { tx: 1, ty: 2 }; // enemy 初期位置をタイル基準で設定
 
-    const enemyPos: Phaser.Math.Vector2 = map_ground_layer.tileToWorldXY(
-      this.enemyTilePos.tx,
-      this.enemyTilePos.ty
+    const enemyPos: Phaser.Math.Vector2 = mapGroundLayer.tileToWorldXY(
+      this._tilePos.tx,
+      this._tilePos.ty
     );
 
     this.enemy = scene.add.sprite(enemyPos.x, enemyPos.y, "demon", 0);
@@ -28,11 +28,11 @@ export default class Enemy {
   }
 
   moveEnemy(player: Player) {
-    if (this.enemyIsWalking) return;
+    if (this._isWalking) return;
 
     // x, y 方向のうちより遠い距離を詰める
-    const xTileCntToPlayer = abs(player.tilePos.tx - this.enemyTilePos.tx);
-    const yTileCntToPlayer = abs(player.tilePos.ty - this.enemyTilePos.ty);
+    const xTileCntToPlayer = abs(player.tilePos.tx - this._tilePos.tx);
+    const yTileCntToPlayer = abs(player.tilePos.ty - this._tilePos.ty);
 
     if (xTileCntToPlayer > yTileCntToPlayer) {
       this.setNewPosition(player.tilePos, "tx");
@@ -46,40 +46,39 @@ export default class Enemy {
     }
   }
 
-  private setNewPosition(playerTilePos: TilePos, dir: "tx" | "ty"): TilePos {
-    let enemyDir: MoveDir = 0;
-    let enemyNewTilePos: TilePos = this.enemyTilePos;
+  private setNewPosition(playerTilePos: TilePos, dir: "tx" | "ty") {
+    const moveDirs: MoveDirs = { x: 0, y: 0 };
+    let enemyNewTilePos: TilePos = this._tilePos;
 
     // player と enemy の指定方向座標が一致なら早期return
-    if (this.enemyTilePos[dir] === playerTilePos[dir]) return;
+    if (this._tilePos[dir] === playerTilePos[dir]) return;
 
-    if (this.enemyTilePos[dir] < playerTilePos[dir]) {
-      enemyDir = 1;
-    } else {
-      enemyDir = -1;
+    switch (dir) {
+      case "tx":
+        moveDirs.x = this._tilePos[dir] < playerTilePos[dir] ? 1 : -1;
+        break;
+      case "ty":
+        moveDirs.y = this._tilePos[dir] < playerTilePos[dir] ? 1 : -1;
     }
-
-    const xDir = dir === "tx" ? enemyDir : 0;
-    const yDir = dir === "ty" ? enemyDir : 0;
 
     // 方向要素を上書き
     enemyNewTilePos = {
-      tx: enemyNewTilePos.tx + xDir,
-      ty: enemyNewTilePos.ty + yDir,
+      tx: enemyNewTilePos.tx + moveDirs.x,
+      ty: enemyNewTilePos.ty + moveDirs.y,
     };
 
-    this.enemyTilePos = enemyNewTilePos;
+    this._tilePos = enemyNewTilePos;
 
-    this.gridWalkTween(this.enemy, this.enemyWalkSpeed, xDir, yDir, () => {
-      this.enemyIsWalking = false;
+    this.gridWalkTween(this.enemy, this.walkSpeed, moveDirs, () => {
+      this._isWalking = false;
     });
   }
 
   private gridWalkTween(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     target: any,
     baseSpeed: number,
-    xDir: MoveDir,
-    yDir: MoveDir,
+    moveDirs: MoveDirs,
     onComplete: () => void
   ) {
     if (target.x === false) return;
@@ -91,12 +90,12 @@ export default class Enemy {
       // X座標の移動を設定
       x: {
         getStart: () => target.x,
-        getEnd: () => target.x + baseSpeed * xDir,
+        getEnd: () => target.x + baseSpeed * moveDirs.x,
       },
       // X座標の移動を設定
       y: {
         getStart: () => target.y,
-        getEnd: () => target.y + baseSpeed * yDir,
+        getEnd: () => target.y + baseSpeed * moveDirs.y,
       },
       // アニメーションの時間
       duration: 300,

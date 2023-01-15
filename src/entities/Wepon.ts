@@ -76,7 +76,9 @@ export default class Wepon extends Sprite {
     };
 
     // 外壁判定
-    if (this.isOutOfField(newWeponTilePos)) return;
+    if (this.isOutOfField(newWeponTilePos)) {
+      this._sprite.destroy();
+    }
 
     this._tilePos = newWeponTilePos;
     this._isWalking = true;

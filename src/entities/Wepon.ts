@@ -20,7 +20,7 @@ export default class Wepon extends Sprite {
     let newWeponTilePos: TilePos;
     const moveDirs: MoveDirs = { x: 0, y: 0 };
 
-    if (playerAnimState === "walk_front") {
+    if (playerAnimState === "walk_front" || playerAnimState === "") {
       this._animState = "walk_front";
       moveDirs.y = 1;
       newWeponTilePos = {

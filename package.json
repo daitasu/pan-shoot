@@ -6,7 +6,6 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "node app.ts",
     "lint": "eslint '**/*.@(js|ts)'",
     "start:vite": "vite serve",
     "build:vite": "vite build --mode development",

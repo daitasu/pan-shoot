@@ -2,9 +2,12 @@
 import Map from "./Map";
 import { ONE_TILE_SIZE } from "../constants";
 import Sprite from "./Sprite";
+import Wepon from "./Wepon";
 
 export default class Player extends Sprite {
   private _animState: WalkAnimState;
+  private _mapGroundLayer: Phaser.Tilemaps.TilemapLayer;
+  private _weponShooting: boolean;
 
   // player アニメーションを配列で設定
   private animations: { key: string; frameStart: number; frameEnd: number }[] =
@@ -20,11 +23,11 @@ export default class Player extends Sprite {
     scene: Phaser.Scene
   ) {
     super(scene);
-    // this.scene = scene;
 
     this._animState = "";
     this._isWalking = false;
     this._tilePos = { tx: 10, ty: 8 }; // player 初期位置をタイル基準で設定
+    this._mapGroundLayer = mapGroundLayer;
 
     const playerPos: Phaser.Math.Vector2 = mapGroundLayer.tileToWorldXY(
       this._tilePos.tx,
@@ -83,9 +86,13 @@ export default class Player extends Sprite {
     } else if (cursors.right.isDown) {
       newAnimState = "walk_right";
       moveDirs.x = 1;
+    } else if (cursors.space.isDown) {
+      // 武器を撃つ
+      this.shootWepon();
+      this._sprite.anims.stop();
+      return;
     } else {
       this._sprite.anims.stop();
-      this._animState = "";
       return;
     }
 
@@ -107,10 +114,7 @@ export default class Player extends Sprite {
       ty: newTilePos.ty + moveDirs.y,
     };
 
-    if (newTilePos.tx < 0) return;
-    if (newTilePos.ty < 0) return;
-    if (newTilePos.tx >= 20) return;
-    if (newTilePos.ty >= 15) return;
+    if (this.isOutOfField(newTilePos)) return;
 
     // 静mapの衝突判定
     if (map.mapGround[newTilePos.ty][newTilePos.tx] == 1) return;
@@ -120,6 +124,22 @@ export default class Player extends Sprite {
     this.gridWalkTween(this._sprite, this._walkSpeed, moveDirs, () => {
       this._isWalking = false;
     });
+  }
+
+  // 武器オブジェクトを呼び出し、設置・移動
+  shootWepon(): void {
+    if (this._weponShooting) return;
+
+    this._weponShooting = true;
+
+    const wepon = new Wepon(this._mapGroundLayer, this.scene);
+    wepon.shoot(this._tilePos, this._animState);
+
+    const timer = this.scene.time.addEvent({
+      delay: 500,
+      loop: false,
+    });
+    timer.callback = () => (this._weponShooting = false);
   }
 
   get isWalking(): boolean {

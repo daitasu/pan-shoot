@@ -16,6 +16,7 @@ export class Game extends Phaser.Scene {
 
   preload() {
     this.load.image("mapTiles", `./images/map_tile.png`);
+    this.load.image("chocopan", `./images/chocopan.png`);
     this.load.spritesheet("katopan", "./images/katopan.png", {
       frameWidth: SPRITE_FRAME_SIZE,
       frameHeight: SPRITE_FRAME_SIZE,
@@ -38,7 +39,7 @@ export class Game extends Phaser.Scene {
   }
 
   update() {
-    if (this.player.isWalking) return; // 追加
+    if (this.player.isWalking) return;
 
     this.player.controlPlayer(this.cursors, this.map);
 

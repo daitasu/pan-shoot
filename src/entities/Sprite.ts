@@ -1,5 +1,5 @@
 ﻿import { ONE_TILE_SIZE } from "../constants";
-import { MoveDirs } from "../types/game";
+import { MoveDirs, TilePos } from "../types/game";
 
 export default class Sprite {
   protected scene: Phaser.Scene;
@@ -43,5 +43,12 @@ export default class Sprite {
         onComplete(); // 引数の関数実行
       },
     });
+  }
+
+  // 外壁判定
+  protected isOutOfField(tilePos: TilePos): boolean {
+    return (
+      tilePos.tx < 0 || tilePos.ty < 0 || tilePos.tx >= 20 || tilePos.ty >= 15
+    );
   }
 }

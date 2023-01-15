@@ -15,12 +15,12 @@ export class Game extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("mapTiles", `../../public/images/map_tile.png`);
-    this.load.spritesheet("katopan", "../../public/images/katopan.png", {
+    this.load.image("mapTiles", `./images/map_tile.png`);
+    this.load.spritesheet("katopan", "./images/katopan.png", {
       frameWidth: SPRITE_FRAME_SIZE,
       frameHeight: SPRITE_FRAME_SIZE,
     });
-    this.load.spritesheet("demon", "../../public/images/demon.png", {
+    this.load.spritesheet("demon", "./images/demon.png", {
       frameWidth: SPRITE_FRAME_SIZE,
       frameHeight: SPRITE_FRAME_SIZE,
     });

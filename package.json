@@ -2,15 +2,17 @@
   "name": "pan-shoot",
   "version": "0.0.1",
   "description": "pan shoot game",
-  "main": "index.js",
   "author": "daitasu",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "webpack",
-    "dev": "webpack serve",
     "start": "node app.ts",
-    "lint": "eslint '**/*.@(js|ts)'"
+    "lint": "eslint '**/*.@(js|ts)'",
+    "start:vite": "vite serve",
+    "build:vite": "vite build --mode development",
+    "dev": "vite serve",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "basic-auth-connect": "^1.0.0",
@@ -24,8 +26,6 @@
     "expose-loader": "^4.0.0",
     "ts-loader": "^9.3.1",
     "typescript": "^4.8.0",
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.10.0"
+    "vite": "^4.0.4"
   }
 }

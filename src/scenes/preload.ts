@@ -1,8 +1,6 @@
 ﻿import * as Phaser from "phaser";
-import { fontStyle } from "../utils/fontStyle";
-
-type Text = Phaser.GameObjects.Text;
-
+import { fontStyle } from "../utils/text";
+import { Text } from "../types/game";
 export class Preload extends Phaser.Scene {
   init() {
     console.log("Preloading");

@@ -4,6 +4,8 @@ import Map from "../entities/Map";
 import Player from "../entities/Player";
 import { SPRITE_FRAME_SIZE } from "../constants";
 import Wepon from "../entities/Wepon";
+import { fontStyle } from "../utils/text";
+import { Text } from "../types/game";
 
 export class Game extends Phaser.Scene {
   private enemy?: Enemy;
@@ -11,9 +13,11 @@ export class Game extends Phaser.Scene {
   private player?: Player;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private weponInterval: boolean;
+  private gameOver: boolean;
 
   init() {
     this.cursors = this.input.keyboard.createCursorKeys();
+    this.gameOver = false;
   }
 
   preload() {
@@ -50,6 +54,8 @@ export class Game extends Phaser.Scene {
   }
 
   update() {
+    if (this.gameOver) return;
+
     // wepon の更新判定
     if (this.cursors.space.isDown) {
       this.shootWepon();
@@ -76,5 +82,40 @@ export class Game extends Phaser.Scene {
     timer.callback = () => {
       this.weponInterval = false;
     };
+  }
+
+  // 爆弾に当たるとキャラクターが光り、ゲームオーバーとなる
+  changeToGameOver() {
+    this.gameOver = true;
+
+    this.player.setTint(0xff0000);
+
+    const background = this.add.rectangle(0, 0, 800, 600, 0x333333, 0.6);
+    background.setScale(2);
+
+    const retryText: Text = this.add.text(
+      400,
+      300,
+      "RETRY",
+      fontStyle("#FFF", "70px")
+    );
+    retryText.setOrigin(0.5);
+    retryText.setDepth(1);
+
+    retryText.setInteractive({
+      useHandCursor: true,
+    });
+
+    retryText.on("pointerover", () => {
+      retryText.setStyle({ color: "#F11C32" });
+    });
+
+    retryText.on("pointerout", () => {
+      retryText.setStyle({ color: "#FFF" });
+    });
+
+    retryText.on("pointerdown", () => {
+      this.scene.start("preload");
+    });
   }
 }

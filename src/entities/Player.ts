@@ -122,6 +122,10 @@ export default class Player extends Sprite {
     });
   }
 
+  setTint(tint: number) {
+    this._sprite.setTint(tint);
+  }
+
   getCharactorState(): CharacterState {
     return {
       animState: this._animState,

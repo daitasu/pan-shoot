@@ -1,4 +1,5 @@
-﻿export type TilePos = { tx: number; ty: number };
+﻿export type Text = Phaser.GameObjects.Text;
+export type TilePos = { tx: number; ty: number };
 export type MoveDir = -1 | 0 | 1; // 追加
 export type MoveDirs = { x: MoveDir; y: MoveDir };
 

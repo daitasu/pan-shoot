@@ -1,16 +1,9 @@
-﻿import {
-  WalkAnimState,
-  TilePos,
-  MoveDirs,
-  CharacterState,
-} from "../types/game";
+﻿import { WalkAnimState, TilePos, MoveDirs } from "../types/game";
 import Map from "./Map";
 import { ONE_TILE_SIZE } from "../constants";
 import Sprite from "./Sprite";
 
 export default class Player extends Sprite {
-  private _animState: WalkAnimState;
-
   // player アニメーションを配列で設定
   private animations: { key: string; frameStart: number; frameEnd: number }[] =
     [
@@ -26,7 +19,6 @@ export default class Player extends Sprite {
   ) {
     super(scene);
 
-    this._animState = "";
     this._isWalking = false;
     this._tilePos = { tx: 10, ty: 8 }; // player 初期位置をタイル基準で設定
 
@@ -124,12 +116,5 @@ export default class Player extends Sprite {
 
   setTint(tint: number) {
     this._sprite.setTint(tint);
-  }
-
-  getCharactorState(): CharacterState {
-    return {
-      animState: this._animState,
-      tilePos: this._tilePos,
-    };
   }
 }

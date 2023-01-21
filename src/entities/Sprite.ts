@@ -1,15 +1,23 @@
 ﻿import { ONE_TILE_SIZE } from "../constants";
-import { MoveDirs, TilePos } from "../types/game";
+import {
+  MoveDirs,
+  TilePos,
+  WalkAnimState,
+  CharacterState,
+} from "../types/game";
 
 export default class Sprite {
   protected scene: Phaser.Scene;
   protected _sprite: Phaser.GameObjects.Sprite;
   protected _tilePos: { tx: number; ty: number };
-  protected _walkSpeed = ONE_TILE_SIZE;
   protected _isWalking: boolean;
+  protected _animState: WalkAnimState;
+  protected _walkSpeed: number;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
+    this._animState = "";
+    this._walkSpeed = ONE_TILE_SIZE;
   }
 
   protected gridWalkTween(
@@ -50,5 +58,12 @@ export default class Sprite {
     return (
       tilePos.tx < 0 || tilePos.ty < 0 || tilePos.tx >= 20 || tilePos.ty >= 15
     );
+  }
+
+  getCharactorState(): CharacterState {
+    return {
+      animState: this._animState,
+      tilePos: this._tilePos,
+    };
   }
 }

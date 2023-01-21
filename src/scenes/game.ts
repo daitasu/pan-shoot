@@ -5,14 +5,14 @@ import Player from "../entities/Player";
 import { SPRITE_FRAME_SIZE } from "../constants";
 import Wepon from "../entities/Wepon";
 import { fontStyle } from "../utils/text";
-import { Text } from "../types/game";
+import { CharacterState, Text } from "../types/game";
 
 export class Game extends Phaser.Scene {
   private enemy?: Enemy;
   private map?: Map;
   private player?: Player;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
-  private weponInterval: boolean;
+  private shootInterval: boolean;
   private gameOver: boolean;
 
   init() {
@@ -63,28 +63,51 @@ export class Game extends Phaser.Scene {
     }
     // player の更新判定
     this.player.controlPlayer(this.cursors, this.map);
+
+    // 敵と人のHIT判定
+    if (
+      this.jedgeHit(
+        this.player.getCharactorState(),
+        this.enemy.getCharactorState()
+      )
+    ) {
+      this.changeToGameOver();
+    }
+
+    // TODO: 敵の残数を見て、出現させる
   }
 
   // 武器オブジェクトを呼び出し、設置・移動
   shootWepon(): void {
-    if (this.weponInterval) return;
+    if (this.shootInterval) return;
 
-    this.weponInterval = true;
+    this.shootInterval = true;
 
     const wepon = new Wepon(this.map.mapGroundLayer, this);
-    wepon.shoot(this.player.getCharactorState());
+    // wepon.shoot(this.player.getCharactorState());
+
+    wepon.setGround(this.player.getCharactorState());
+
+    // 武器の進行
+    const weponMoveTimer = this.time.addEvent({
+      delay: 200,
+      loop: true,
+    });
+    weponMoveTimer.callback = () => {
+      wepon.move();
+      //TODO: 敵と武器のHIT判定
+    };
 
     // 連打制御
-    const timer = this.time.addEvent({
+    const shootIntervalTimer = this.time.addEvent({
       delay: 500,
       loop: false,
     });
-    timer.callback = () => {
-      this.weponInterval = false;
+    shootIntervalTimer.callback = () => {
+      this.shootInterval = false;
     };
   }
 
-  // 爆弾に当たるとキャラクターが光り、ゲームオーバーとなる
   changeToGameOver() {
     this.gameOver = true;
 
@@ -93,9 +116,18 @@ export class Game extends Phaser.Scene {
     const background = this.add.rectangle(0, 0, 800, 600, 0x333333, 0.6);
     background.setScale(2);
 
+    const gameOverText: Text = this.add.text(
+      400,
+      250,
+      "GAME OVER",
+      fontStyle("#FF0000", "100px")
+    );
+    gameOverText.setOrigin(0.5);
+    gameOverText.setDepth(1);
+
     const retryText: Text = this.add.text(
       400,
-      300,
+      500,
       "RETRY",
       fontStyle("#FFF", "70px")
     );
@@ -117,5 +149,16 @@ export class Game extends Phaser.Scene {
     retryText.on("pointerdown", () => {
       this.scene.start("preload");
     });
+  }
+
+  // 衝突判定
+  jedgeHit(
+    characterAState: CharacterState,
+    characterBState: CharacterState
+  ): boolean {
+    return (
+      characterAState.tilePos.tx === characterBState.tilePos.tx &&
+      characterAState.tilePos.ty === characterBState.tilePos.ty
+    );
   }
 }

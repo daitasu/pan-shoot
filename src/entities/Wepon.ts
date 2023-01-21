@@ -1,15 +1,9 @@
 import Sprite from "./Sprite";
 import { ONE_TILE_SIZE } from "../constants";
-import {
-  CharacterState,
-  MoveDirs,
-  TilePos,
-  WalkAnimState,
-} from "../types/game";
+import { CharacterState, MoveDirs, TilePos } from "../types/game";
 
 export default class Wepon extends Sprite {
   private _mapGroundLayer: Phaser.Tilemaps.TilemapLayer;
-  private _animState: WalkAnimState;
   private _moveDirs: MoveDirs;
 
   constructor(
@@ -21,37 +15,40 @@ export default class Wepon extends Sprite {
     this._mapGroundLayer = mapGroundLayer;
   }
 
-  setGround(playerTilePos: TilePos, playerAnimState: WalkAnimState): void {
+  setGround(playerState: CharacterState): void {
     let newWeponTilePos: TilePos;
     const moveDirs: MoveDirs = { x: 0, y: 0 };
 
-    if (playerAnimState === "walk_front" || playerAnimState === "") {
+    if (
+      playerState.animState === "walk_front" ||
+      playerState.animState === ""
+    ) {
       this._animState = "walk_front";
       moveDirs.y = 1;
       newWeponTilePos = {
-        tx: playerTilePos.tx,
-        ty: playerTilePos.ty + 1,
+        tx: playerState.tilePos.tx,
+        ty: playerState.tilePos.ty + 1,
       };
-    } else if (playerAnimState === "walk_left") {
+    } else if (playerState.animState === "walk_left") {
       this._animState = "walk_left";
       moveDirs.x = -1;
       newWeponTilePos = {
-        tx: playerTilePos.tx - 1,
-        ty: playerTilePos.ty,
+        tx: playerState.tilePos.tx - 1,
+        ty: playerState.tilePos.ty,
       };
-    } else if (playerAnimState === "walk_right") {
+    } else if (playerState.animState === "walk_right") {
       this._animState = "walk_right";
       moveDirs.x = 1;
       newWeponTilePos = {
-        tx: playerTilePos.tx + 1,
-        ty: playerTilePos.ty,
+        tx: playerState.tilePos.tx + 1,
+        ty: playerState.tilePos.ty,
       };
-    } else if (playerAnimState === "walk_back") {
+    } else if (playerState.animState === "walk_back") {
       this._animState = "walk_back";
       moveDirs.y = -1;
       newWeponTilePos = {
-        tx: playerTilePos.tx,
-        ty: playerTilePos.ty - 1,
+        tx: playerState.tilePos.tx,
+        ty: playerState.tilePos.ty - 1,
       };
     }
 
@@ -97,7 +94,7 @@ export default class Wepon extends Sprite {
   }
 
   shoot(playerState: CharacterState): void {
-    this.setGround(playerState.tilePos, playerState.animState);
+    this.setGround(playerState);
 
     let timer = this.scene.time.addEvent({
       delay: 200,

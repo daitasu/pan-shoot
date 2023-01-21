@@ -1,19 +1,28 @@
 ﻿import { TilePos, MoveDirs, CharacterState } from "../types/game";
 import { abs } from "../utils/math";
-import Player from "./Player";
 import Sprite from "./Sprite";
 import { ONE_TILE_SIZE } from "../constants";
+import Map from "./Map";
 
 export default class Enemy extends Sprite {
-  constructor(
-    mapGroundLayer: Phaser.Tilemaps.TilemapLayer,
-    scene: Phaser.Scene
-  ) {
+  constructor(map: Map, scene: Phaser.Scene) {
     super(scene);
     this._isWalking = false;
-    this._tilePos = { tx: 1, ty: 2 }; // enemy 初期位置をタイル基準で設定
 
-    const enemyPos: Phaser.Math.Vector2 = mapGroundLayer.tileToWorldXY(
+    // 出現位置を端から算出
+    if (Phaser.Math.Between(0, 1) === 0) {
+      this._tilePos = {
+        tx: -1,
+        ty: Phaser.Math.Between(0 - 1, map.mapTileLendth.yl),
+      };
+    } else {
+      this._tilePos = {
+        tx: Phaser.Math.Between(0 - 1, map.mapTileLendth.xl),
+        ty: -1,
+      };
+    }
+
+    const enemyPos: Phaser.Math.Vector2 = map.mapGroundLayer.tileToWorldXY(
       this._tilePos.tx,
       this._tilePos.ty
     );

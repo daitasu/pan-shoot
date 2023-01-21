@@ -1,11 +1,11 @@
 ﻿import { ONE_TILE_SIZE } from "../constants";
-
+import { MapGround } from "../types/game";
 export default class Map {
   private map?: Phaser.Tilemaps.Tilemap;
   private tiles?: Phaser.Tilemaps.Tileset;
   private ground_layer?: Phaser.Tilemaps.TilemapLayer;
 
-  private ground: number[][] = [
+  private ground: MapGround = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
@@ -38,7 +38,14 @@ export default class Map {
     return this.ground_layer;
   }
 
-  get mapGround(): number[][] {
+  get mapGround(): MapGround {
     return this.ground;
+  }
+
+  get mapTileLendth(): { xl: number; yl: number } {
+    return {
+      xl: this.ground[0].length,
+      yl: this.ground.length,
+    };
   }
 }

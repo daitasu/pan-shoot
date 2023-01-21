@@ -9,6 +9,7 @@ import { CharacterState, Text } from "../types/game";
 
 export class Game extends Phaser.Scene {
   private enemy?: Enemy;
+  private enemies: Enemy[];
   private map?: Map;
   private player?: Player;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -18,6 +19,7 @@ export class Game extends Phaser.Scene {
   init() {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.gameOver = false;
+    this.enemies = [];
   }
 
   preload() {
@@ -41,16 +43,18 @@ export class Game extends Phaser.Scene {
     this.player = new Player(this.map.mapGroundLayer, this);
 
     // enemy の読み込み
-    this.enemy = new Enemy(this.map.mapGroundLayer, this);
+    const enemy = new Enemy(this.map, this);
+    this.enemies.push(enemy);
 
-    // enemy は定期で動く
-    const timer = this.time.addEvent({
-      delay: 2000,
-      loop: true,
+    this.enemies.forEach((enemy) => {
+      const timer = this.time.addEvent({
+        delay: 1500,
+        loop: true,
+      });
+      timer.callback = () => {
+        enemy.moveEnemy(this.player.getCharactorState());
+      };
     });
-    timer.callback = () => {
-      this.enemy.moveEnemy(this.player.getCharactorState());
-    };
   }
 
   update() {
@@ -65,14 +69,16 @@ export class Game extends Phaser.Scene {
     this.player.controlPlayer(this.cursors, this.map);
 
     // 敵と人のHIT判定
-    if (
-      this.jedgeHit(
-        this.player.getCharactorState(),
-        this.enemy.getCharactorState()
-      )
-    ) {
-      this.changeToGameOver();
-    }
+    this.enemies.forEach((enemy) => {
+      if (
+        this.judgeHit(
+          this.player.getCharactorState(),
+          enemy.getCharactorState()
+        )
+      ) {
+        this.changeToGameOver();
+      }
+    });
 
     // TODO: 敵の残数を見て、出現させる
   }
@@ -95,14 +101,16 @@ export class Game extends Phaser.Scene {
     });
     weponMoveTimer.callback = () => {
       wepon.move();
-      //TODO: 敵と武器のHIT判定
-      if (
-        this.jedgeHit(wepon.getCharactorState(), this.enemy.getCharactorState())
-      ) {
-        // TODO: スコアアップ
-        wepon.destroy();
-        this.enemy.destroy();
-      }
+
+      this.enemies.forEach((enemy) => {
+        if (
+          this.judgeHit(wepon.getCharactorState(), enemy.getCharactorState())
+        ) {
+          // TODO: スコアアップ
+          wepon.destroy();
+          enemy.destroy();
+        }
+      });
     };
 
     // 連打制御
@@ -159,7 +167,7 @@ export class Game extends Phaser.Scene {
   }
 
   // 衝突判定
-  jedgeHit(
+  judgeHit(
     characterAState: CharacterState,
     characterBState: CharacterState
   ): boolean {

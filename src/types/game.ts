@@ -2,6 +2,7 @@
 export type TilePos = { tx: number; ty: number };
 export type MoveDir = -1 | 0 | 1; // 追加
 export type MoveDirs = { x: MoveDir; y: MoveDir };
+export type MapGround = number[][];
 
 export type WalkAnimState =
   | "walk_front"

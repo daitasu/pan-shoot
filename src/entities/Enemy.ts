@@ -68,4 +68,8 @@ export default class Enemy extends Sprite {
       this._isWalking = false;
     });
   }
+
+  destroy() {
+    this._sprite.destroy();
+  }
 }

@@ -96,6 +96,13 @@ export class Game extends Phaser.Scene {
     weponMoveTimer.callback = () => {
       wepon.move();
       //TODO: 敵と武器のHIT判定
+      if (
+        this.jedgeHit(wepon.getCharactorState(), this.enemy.getCharactorState())
+      ) {
+        // TODO: スコアアップ
+        wepon.destroy();
+        this.enemy.destroy();
+      }
     };
 
     // 連打制御

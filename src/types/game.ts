@@ -8,3 +8,8 @@ export type WalkAnimState =
   | "walk_left"
   | "walk_right"
   | "";
+
+export type CharacterState = {
+  animState: WalkAnimState;
+  tilePos: TilePos;
+};

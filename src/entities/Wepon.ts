@@ -1,6 +1,11 @@
 import Sprite from "./Sprite";
 import { ONE_TILE_SIZE } from "../constants";
-import { MoveDirs, TilePos, WalkAnimState } from "../types/game";
+import {
+  CharacterState,
+  MoveDirs,
+  TilePos,
+  WalkAnimState,
+} from "../types/game";
 
 export default class Wepon extends Sprite {
   private _mapGroundLayer: Phaser.Tilemaps.TilemapLayer;
@@ -87,11 +92,15 @@ export default class Wepon extends Sprite {
     });
   }
 
-  shoot(playerTilePos: TilePos, playerAnimState: WalkAnimState): void {
-    this.setGround(playerTilePos, playerAnimState);
+  destroy() {
+    this._sprite.destroy();
+  }
+
+  shoot(playerState: CharacterState): void {
+    this.setGround(playerState.tilePos, playerState.animState);
 
     let timer = this.scene.time.addEvent({
-      delay: 300,
+      delay: 200,
       loop: true,
     });
 

@@ -1,4 +1,4 @@
-﻿import { TilePos, MoveDirs } from "../types/game";
+﻿import { TilePos, MoveDirs, CharacterState } from "../types/game";
 import { abs } from "../utils/math";
 import Player from "./Player";
 import Sprite from "./Sprite";
@@ -22,20 +22,20 @@ export default class Enemy extends Sprite {
     this._sprite.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);
   }
 
-  moveEnemy(player: Player) {
+  moveEnemy(playerState: CharacterState) {
     if (this._isWalking) return;
 
     // x, y 方向のうちより遠い距離を詰める
-    const xTileCntToPlayer = abs(player.tilePos.tx - this._tilePos.tx);
-    const yTileCntToPlayer = abs(player.tilePos.ty - this._tilePos.ty);
+    const xTileCntToPlayer = abs(playerState.tilePos.tx - this._tilePos.tx);
+    const yTileCntToPlayer = abs(playerState.tilePos.ty - this._tilePos.ty);
 
     if (xTileCntToPlayer > yTileCntToPlayer) {
-      this.setNewPosition(player.tilePos, "tx");
+      this.setNewPosition(playerState.tilePos, "tx");
     } else if (yTileCntToPlayer > xTileCntToPlayer) {
-      this.setNewPosition(player.tilePos, "ty");
+      this.setNewPosition(playerState.tilePos, "ty");
     } else {
       this.setNewPosition(
-        player.tilePos,
+        playerState.tilePos,
         Phaser.Math.Between(0, 1) === 0 ? "tx" : "ty"
       );
     }

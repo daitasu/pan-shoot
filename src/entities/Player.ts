@@ -1,13 +1,15 @@
-﻿import { WalkAnimState, TilePos, MoveDirs } from "../types/game";
+﻿import {
+  WalkAnimState,
+  TilePos,
+  MoveDirs,
+  CharacterState,
+} from "../types/game";
 import Map from "./Map";
 import { ONE_TILE_SIZE } from "../constants";
 import Sprite from "./Sprite";
-import Wepon from "./Wepon";
 
 export default class Player extends Sprite {
   private _animState: WalkAnimState;
-  private _mapGroundLayer: Phaser.Tilemaps.TilemapLayer;
-  private _weponShooting: boolean;
 
   // player アニメーションを配列で設定
   private animations: { key: string; frameStart: number; frameEnd: number }[] =
@@ -27,7 +29,6 @@ export default class Player extends Sprite {
     this._animState = "";
     this._isWalking = false;
     this._tilePos = { tx: 10, ty: 8 }; // player 初期位置をタイル基準で設定
-    this._mapGroundLayer = mapGroundLayer;
 
     const playerPos: Phaser.Math.Vector2 = mapGroundLayer.tileToWorldXY(
       this._tilePos.tx,
@@ -86,11 +87,6 @@ export default class Player extends Sprite {
     } else if (cursors.right.isDown) {
       newAnimState = "walk_right";
       moveDirs.x = 1;
-    } else if (cursors.space.isDown) {
-      // 武器を撃つ
-      this.shootWepon();
-      this._sprite.anims.stop();
-      return;
     } else {
       this._sprite.anims.stop();
       return;
@@ -126,27 +122,10 @@ export default class Player extends Sprite {
     });
   }
 
-  // 武器オブジェクトを呼び出し、設置・移動
-  shootWepon(): void {
-    if (this._weponShooting) return;
-
-    this._weponShooting = true;
-
-    const wepon = new Wepon(this._mapGroundLayer, this.scene);
-    wepon.shoot(this._tilePos, this._animState);
-
-    const timer = this.scene.time.addEvent({
-      delay: 500,
-      loop: false,
-    });
-    timer.callback = () => (this._weponShooting = false);
-  }
-
-  get isWalking(): boolean {
-    return this._isWalking;
-  }
-
-  get tilePos(): TilePos {
-    return this._tilePos;
+  getCharactorState(): CharacterState {
+    return {
+      animState: this._animState,
+      tilePos: this._tilePos,
+    };
   }
 }

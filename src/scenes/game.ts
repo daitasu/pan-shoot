@@ -3,12 +3,14 @@ import Enemy from "../entities/Enemy";
 import Map from "../entities/Map";
 import Player from "../entities/Player";
 import { SPRITE_FRAME_SIZE } from "../constants";
+import Wepon from "../entities/Wepon";
 
 export class Game extends Phaser.Scene {
   private enemy?: Enemy;
   private map?: Map;
   private player?: Player;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
+  private weponInterval: boolean;
 
   init() {
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -36,14 +38,43 @@ export class Game extends Phaser.Scene {
 
     // enemy の読み込み
     this.enemy = new Enemy(this.map.mapGroundLayer, this);
+
+    // enemy は定期で動く
+    const timer = this.time.addEvent({
+      delay: 2000,
+      loop: true,
+    });
+    timer.callback = () => {
+      this.enemy.moveEnemy(this.player.getCharactorState());
+    };
   }
 
   update() {
-    if (this.player.isWalking) return;
-
+    // wepon の更新判定
+    if (this.cursors.space.isDown) {
+      this.shootWepon();
+      return;
+    }
+    // player の更新判定
     this.player.controlPlayer(this.cursors, this.map);
+  }
 
-    if (!this.player.isWalking) return;
-    this.enemy.moveEnemy(this.player);
+  // 武器オブジェクトを呼び出し、設置・移動
+  shootWepon(): void {
+    if (this.weponInterval) return;
+
+    this.weponInterval = true;
+
+    const wepon = new Wepon(this.map.mapGroundLayer, this);
+    wepon.shoot(this.player.getCharactorState());
+
+    // 連打制御
+    const timer = this.time.addEvent({
+      delay: 500,
+      loop: false,
+    });
+    timer.callback = () => {
+      this.weponInterval = false;
+    };
   }
 }

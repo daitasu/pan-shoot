@@ -8,7 +8,6 @@ import { fontStyle } from "../utils/text";
 import { CharacterState, Text } from "../types/game";
 
 export class Game extends Phaser.Scene {
-  private enemy?: Enemy;
   private enemies: Enemy[];
   private map?: Map;
   private player?: Player;
@@ -47,13 +46,7 @@ export class Game extends Phaser.Scene {
     this.enemies.push(enemy);
 
     this.enemies.forEach((enemy) => {
-      const timer = this.time.addEvent({
-        delay: 1500,
-        loop: true,
-      });
-      timer.callback = () => {
-        enemy.moveEnemy(this.player.getCharactorState());
-      };
+      enemy.startMove(this.player);
     });
   }
 
@@ -90,28 +83,27 @@ export class Game extends Phaser.Scene {
     this.shootInterval = true;
 
     const wepon = new Wepon(this.map.mapGroundLayer, this);
-    // wepon.shoot(this.player.getCharactorState());
-
     wepon.setGround(this.player.getCharactorState());
 
-    // 武器の進行
-    const weponMoveTimer = this.time.addEvent({
-      delay: 200,
-      loop: true,
-    });
-    weponMoveTimer.callback = () => {
-      wepon.move();
-
-      this.enemies.forEach((enemy) => {
+    const hitWeponAndEnemy = () => {
+      this.enemies.forEach((enemy, i) => {
         if (
           this.judgeHit(wepon.getCharactorState(), enemy.getCharactorState())
         ) {
           // TODO: スコアアップ
+
+          // 武器の削除
           wepon.destroy();
+
+          // 敵の削除
           enemy.destroy();
+          this.enemies.splice(i, 1);
         }
       });
     };
+
+    // 武器の進行
+    wepon.startMove(hitWeponAndEnemy);
 
     // 連打制御
     const shootIntervalTimer = this.time.addEvent({

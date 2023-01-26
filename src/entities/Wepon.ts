@@ -5,6 +5,7 @@ import { CharacterState, MoveDirs, TilePos } from "../types/game";
 export default class Wepon extends Sprite {
   private _mapGroundLayer: Phaser.Tilemaps.TilemapLayer;
   private _moveDirs: MoveDirs;
+  private _timer: Phaser.Time.TimerEvent;
 
   constructor(
     mapGroundLayer: Phaser.Tilemaps.TilemapLayer,
@@ -13,6 +14,32 @@ export default class Wepon extends Sprite {
     super(scene);
 
     this._mapGroundLayer = mapGroundLayer;
+    this._timer = scene.time.addEvent({
+      delay: 200,
+      loop: true,
+    });
+  }
+
+  private move() {
+    if (this._isWalking) return;
+
+    let newWeponTilePos: TilePos = this._tilePos;
+
+    newWeponTilePos = {
+      tx: newWeponTilePos.tx + this._moveDirs.x,
+      ty: newWeponTilePos.ty + this._moveDirs.y,
+    };
+
+    // 外壁判定
+    if (this.isOutOfField(newWeponTilePos)) {
+      this._sprite.destroy();
+    }
+
+    this._tilePos = newWeponTilePos;
+    this._isWalking = true;
+    this.gridWalkTween(this._sprite, this._walkSpeed, this._moveDirs, () => {
+      this._isWalking = false;
+    });
   }
 
   setGround(playerState: CharacterState): void {
@@ -67,40 +94,20 @@ export default class Wepon extends Sprite {
     this._sprite.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);
   }
 
-  move() {
-    if (this._isWalking) return;
+  private stopMove() {
+    this._timer.remove();
+  }
 
-    let newWeponTilePos: TilePos = this._tilePos;
+  startMove(callbackAfterMove?: () => void) {
+    this._timer.callback = () => {
+      this.move();
 
-    newWeponTilePos = {
-      tx: newWeponTilePos.tx + this._moveDirs.x,
-      ty: newWeponTilePos.ty + this._moveDirs.y,
+      if (callbackAfterMove) callbackAfterMove();
     };
-
-    // 外壁判定
-    if (this.isOutOfField(newWeponTilePos)) {
-      this._sprite.destroy();
-    }
-
-    this._tilePos = newWeponTilePos;
-    this._isWalking = true;
-    this.gridWalkTween(this._sprite, this._walkSpeed, this._moveDirs, () => {
-      this._isWalking = false;
-    });
   }
 
   destroy() {
+    this.stopMove();
     this._sprite.destroy();
-  }
-
-  shoot(playerState: CharacterState): void {
-    this.setGround(playerState);
-
-    let timer = this.scene.time.addEvent({
-      delay: 200,
-      loop: true,
-    });
-
-    timer.callback = () => this.move();
   }
 }

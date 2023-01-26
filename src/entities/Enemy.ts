@@ -3,11 +3,18 @@ import { abs } from "../utils/math";
 import Sprite from "./Sprite";
 import { ONE_TILE_SIZE } from "../constants";
 import Map from "./Map";
+import Player from "./Player";
 
 export default class Enemy extends Sprite {
+  private _timer: Phaser.Time.TimerEvent;
+
   constructor(map: Map, scene: Phaser.Scene) {
     super(scene);
     this._isWalking = false;
+    this._timer = scene.time.addEvent({
+      delay: 1500,
+      loop: true,
+    });
 
     // 出現位置を端から算出
     if (Phaser.Math.Between(0, 1) === 0) {
@@ -29,25 +36,6 @@ export default class Enemy extends Sprite {
     this._sprite = scene.add.sprite(enemyPos.x, enemyPos.y, "demon", 0);
     this._sprite.setOrigin(0);
     this._sprite.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);
-  }
-
-  moveEnemy(playerState: CharacterState) {
-    if (this._isWalking) return;
-
-    // x, y 方向のうちより遠い距離を詰める
-    const xTileCntToPlayer = abs(playerState.tilePos.tx - this._tilePos.tx);
-    const yTileCntToPlayer = abs(playerState.tilePos.ty - this._tilePos.ty);
-
-    if (xTileCntToPlayer > yTileCntToPlayer) {
-      this.setNewPosition(playerState.tilePos, "tx");
-    } else if (yTileCntToPlayer > xTileCntToPlayer) {
-      this.setNewPosition(playerState.tilePos, "ty");
-    } else {
-      this.setNewPosition(
-        playerState.tilePos,
-        Phaser.Math.Between(0, 1) === 0 ? "tx" : "ty"
-      );
-    }
   }
 
   private setNewPosition(playerTilePos: TilePos, dir: "tx" | "ty") {
@@ -78,7 +66,37 @@ export default class Enemy extends Sprite {
     });
   }
 
+  private move(playerState: CharacterState) {
+    if (this._isWalking) return;
+
+    // x, y 方向のうちより遠い距離を詰める
+    const xTileCntToPlayer = abs(playerState.tilePos.tx - this._tilePos.tx);
+    const yTileCntToPlayer = abs(playerState.tilePos.ty - this._tilePos.ty);
+
+    if (xTileCntToPlayer > yTileCntToPlayer) {
+      this.setNewPosition(playerState.tilePos, "tx");
+    } else if (yTileCntToPlayer > xTileCntToPlayer) {
+      this.setNewPosition(playerState.tilePos, "ty");
+    } else {
+      this.setNewPosition(
+        playerState.tilePos,
+        Phaser.Math.Between(0, 1) === 0 ? "tx" : "ty"
+      );
+    }
+  }
+
+  private stopMove() {
+    this._timer.remove();
+  }
+
+  startMove(player: Player) {
+    this._timer.callback = () => {
+      this.move(player.getCharactorState());
+    };
+  }
+
   destroy() {
+    this.stopMove();
     this._sprite.destroy();
   }
 }

@@ -21,13 +21,13 @@ export default class Enemy extends Sprite {
     // 出現位置を端から算出
     if (Phaser.Math.Between(0, 1) === 0) {
       this._tilePos = {
-        tx: -1,
+        tx: Phaser.Math.Between(0, 1) === 0 ? -1 : groundTileLength.xl,
         ty: Phaser.Math.Between(0 - 1, groundTileLength.yl),
       };
     } else {
       this._tilePos = {
         tx: Phaser.Math.Between(0 - 1, groundTileLength.xl),
-        ty: -1,
+        ty: Phaser.Math.Between(0, 1) === 0 ? -1 : groundTileLength.yl,
       };
     }
 
@@ -64,7 +64,7 @@ export default class Enemy extends Sprite {
 
     this._tilePos = enemyNewTilePos;
 
-    this.gridWalkTween(this._sprite, this._walkSpeed, moveDirs, () => {
+    this.gridWalkTween(this._sprite, moveDirs, () => {
       this._isWalking = false;
     });
   }

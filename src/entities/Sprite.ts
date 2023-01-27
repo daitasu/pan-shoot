@@ -1,4 +1,4 @@
-﻿import { ONE_TILE_SIZE } from "../constants";
+﻿import { ONE_TILE_SIZE, BASE_ANIM_DURATION } from "../constants";
 import {
   MoveDirs,
   TilePos,
@@ -14,10 +14,10 @@ export default class Sprite {
   protected _animState: WalkAnimState;
   protected _walkSpeed: number;
 
-  constructor(scene: Phaser.Scene, spriteConfig?: { speed: number }) {
+  constructor(scene: Phaser.Scene, spriteConfig?: { animDuration: number }) {
     this.scene = scene;
     this._animState = "";
-    this._walkSpeed = spriteConfig?.speed || 300;
+    this._walkSpeed = spriteConfig?.animDuration || BASE_ANIM_DURATION;
   }
 
   protected gridWalkTween(

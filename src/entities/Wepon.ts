@@ -1,5 +1,5 @@
 import Sprite from "./Sprite";
-import { ONE_TILE_SIZE } from "../constants";
+import { BASE_ANIM_DURATION, ONE_TILE_SIZE } from "../constants";
 import { CharacterState, MoveDirs, TilePos } from "../types/game";
 import Map from "./Map";
 
@@ -15,10 +15,10 @@ export default class Wepon extends Sprite {
   private _timer: Phaser.Time.TimerEvent;
 
   constructor(scene: Phaser.Scene) {
-    super(scene);
+    super(scene, { animDuration: BASE_ANIM_DURATION * 0.7 });
 
     this._timer = scene.time.addEvent({
-      delay: 200,
+      delay: 100,
       loop: true,
     });
   }

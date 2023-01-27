@@ -13,16 +13,14 @@ export default class Player extends Sprite {
       { key: "walk_back", frameStart: 9, frameEnd: 11 },
     ];
 
-  constructor(
-    mapGroundLayer: Phaser.Tilemaps.TilemapLayer,
-    scene: Phaser.Scene
-  ) {
+  constructor(map: Map, scene: Phaser.Scene) {
     super(scene);
 
     this._isWalking = false;
     this._tilePos = { tx: 10, ty: 8 }; // player 初期位置をタイル基準で設定
 
-    const playerPos: Phaser.Math.Vector2 = mapGroundLayer.tileToWorldXY(
+    const groundLayer = map.getGroundLayer();
+    const playerPos: Phaser.Math.Vector2 = groundLayer.tileToWorldXY(
       this._tilePos.tx,
       this._tilePos.ty
     );
@@ -102,10 +100,10 @@ export default class Player extends Sprite {
       ty: newTilePos.ty + moveDirs.y,
     };
 
-    if (this.isOutOfField(newTilePos)) return;
+    if (map.isOutOfField(newTilePos)) return;
 
     // 静mapの衝突判定
-    if (map.mapGround[newTilePos.ty][newTilePos.tx] == 1) return;
+    if (map.isObstacleArea(newTilePos)) return;
 
     this._tilePos = newTilePos;
     this._isWalking = true;

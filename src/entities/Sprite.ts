@@ -53,13 +53,6 @@ export default class Sprite {
     });
   }
 
-  // 外壁判定
-  protected isOutOfField(tilePos: TilePos): boolean {
-    return (
-      tilePos.tx < 0 || tilePos.ty < 0 || tilePos.tx >= 20 || tilePos.ty >= 15
-    );
-  }
-
   getCharactorState(): CharacterState {
     return {
       animState: this._animState,

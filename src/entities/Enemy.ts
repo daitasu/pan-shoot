@@ -16,20 +16,23 @@ export default class Enemy extends Sprite {
       loop: true,
     });
 
+    const groundTileLength = map.getGroundTileLendth();
+
     // 出現位置を端から算出
     if (Phaser.Math.Between(0, 1) === 0) {
       this._tilePos = {
         tx: -1,
-        ty: Phaser.Math.Between(0 - 1, map.mapTileLendth.yl),
+        ty: Phaser.Math.Between(0 - 1, groundTileLength.yl),
       };
     } else {
       this._tilePos = {
-        tx: Phaser.Math.Between(0 - 1, map.mapTileLendth.xl),
+        tx: Phaser.Math.Between(0 - 1, groundTileLength.xl),
         ty: -1,
       };
     }
 
-    const enemyPos: Phaser.Math.Vector2 = map.mapGroundLayer.tileToWorldXY(
+    const groundLayer = map.getGroundLayer();
+    const enemyPos: Phaser.Math.Vector2 = groundLayer.tileToWorldXY(
       this._tilePos.tx,
       this._tilePos.ty
     );

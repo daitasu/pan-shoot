@@ -1,26 +1,22 @@
 import Sprite from "./Sprite";
 import { ONE_TILE_SIZE } from "../constants";
 import { CharacterState, MoveDirs, TilePos } from "../types/game";
+import Map from "./Map";
 
 export default class Wepon extends Sprite {
-  private _mapGroundLayer: Phaser.Tilemaps.TilemapLayer;
   private _moveDirs: MoveDirs;
   private _timer: Phaser.Time.TimerEvent;
 
-  constructor(
-    mapGroundLayer: Phaser.Tilemaps.TilemapLayer,
-    scene: Phaser.Scene
-  ) {
+  constructor(scene: Phaser.Scene) {
     super(scene);
 
-    this._mapGroundLayer = mapGroundLayer;
     this._timer = scene.time.addEvent({
       delay: 200,
       loop: true,
     });
   }
 
-  private move() {
+  private move(map: Map) {
     if (this._isWalking) return;
 
     let newWeponTilePos: TilePos = this._tilePos;
@@ -31,7 +27,7 @@ export default class Wepon extends Sprite {
     };
 
     // 外壁判定
-    if (this.isOutOfField(newWeponTilePos)) {
+    if (map.isOutOfField(newWeponTilePos)) {
       this._sprite.destroy();
     }
 
@@ -42,7 +38,11 @@ export default class Wepon extends Sprite {
     });
   }
 
-  setGround(playerState: CharacterState, callbackAfterMove?: () => void): void {
+  setGround(
+    map: Map,
+    playerState: CharacterState,
+    callbackAfterMove?: () => void
+  ): void {
     let newWeponTilePos: TilePos;
     const moveDirs: MoveDirs = { x: 0, y: 0 };
 
@@ -80,12 +80,13 @@ export default class Wepon extends Sprite {
     }
 
     // 外壁判定
-    if (this.isOutOfField(newWeponTilePos)) return;
+    if (map.isOutOfField(newWeponTilePos)) return;
 
     this._tilePos = newWeponTilePos;
     this._moveDirs = moveDirs;
 
-    const weponPos: Phaser.Math.Vector2 = this._mapGroundLayer.tileToWorldXY(
+    const groundLayer = map.getGroundLayer();
+    const weponPos: Phaser.Math.Vector2 = groundLayer.tileToWorldXY(
       newWeponTilePos.tx,
       newWeponTilePos.ty
     );
@@ -100,9 +101,9 @@ export default class Wepon extends Sprite {
     this._timer.remove();
   }
 
-  startMove(callbackAfterMove?: () => void) {
+  startMove(map: Map, callbackAfterMove?: () => void) {
     this._timer.callback = () => {
-      this.move();
+      this.move(map);
 
       if (callbackAfterMove) callbackAfterMove();
     };

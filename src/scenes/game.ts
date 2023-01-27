@@ -57,7 +57,7 @@ export class Game extends Phaser.Scene {
     this.map = new Map(this);
 
     // player の読み込み
-    this.player = new Player(this.map.mapGroundLayer, this);
+    this.player = new Player(this.map, this);
 
     // enemy の読み込み
     const enemy = new Enemy(this.map, this);
@@ -108,7 +108,7 @@ export class Game extends Phaser.Scene {
 
     this.shootInterval = true;
 
-    const wepon = new Wepon(this.map.mapGroundLayer, this);
+    const wepon = new Wepon(this);
 
     const hitWeponAndEnemy = () => {
       this.enemies.forEach((enemy, i) => {
@@ -130,10 +130,14 @@ export class Game extends Phaser.Scene {
     };
 
     // 武器の設置
-    wepon.setGround(this.player.getCharactorState(), hitWeponAndEnemy);
+    wepon.setGround(
+      this.map,
+      this.player.getCharactorState(),
+      hitWeponAndEnemy
+    );
 
     // 武器の進行
-    wepon.startMove(hitWeponAndEnemy);
+    wepon.startMove(this.map, hitWeponAndEnemy);
 
     // 連打制御
     const shootIntervalTimer = this.time.addEvent({

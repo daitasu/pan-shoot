@@ -1,5 +1,5 @@
 ﻿import { ONE_TILE_SIZE } from "../constants";
-import { MapGround } from "../types/game";
+import { MapGround, TilePos } from "../types/game";
 export default class Map {
   private map?: Phaser.Tilemaps.Tilemap;
   private tiles?: Phaser.Tilemaps.Tileset;
@@ -34,15 +34,22 @@ export default class Map {
     this.ground_layer = this.map.createLayer(0, this.tiles, 0, 0);
   }
 
-  get mapGroundLayer(): Phaser.Tilemaps.TilemapLayer {
+  // 外壁判定
+  isOutOfField(tilePos: TilePos): boolean {
+    return (
+      tilePos.tx < 0 || tilePos.ty < 0 || tilePos.tx >= 20 || tilePos.ty >= 15
+    );
+  }
+
+  isObstacleArea(tilePos: TilePos): boolean {
+    return this.ground[tilePos.ty][tilePos.tx] == 1;
+  }
+
+  getGroundLayer(): Phaser.Tilemaps.TilemapLayer {
     return this.ground_layer;
   }
 
-  get mapGround(): MapGround {
-    return this.ground;
-  }
-
-  get mapTileLendth(): { xl: number; yl: number } {
+  getGroundTileLendth(): { xl: number; yl: number } {
     return {
       xl: this.ground[0].length,
       yl: this.ground.length,

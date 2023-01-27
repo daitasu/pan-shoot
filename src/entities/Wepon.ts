@@ -3,6 +3,13 @@ import { ONE_TILE_SIZE } from "../constants";
 import { CharacterState, MoveDirs, TilePos } from "../types/game";
 import Map from "./Map";
 
+const WEPON_TEXTURE = {
+  walk_front: 0,
+  walk_left: 1,
+  walk_right: 2,
+  walk_back: 3,
+};
+
 export default class Wepon extends Sprite {
   private _moveDirs: MoveDirs;
   private _timer: Phaser.Time.TimerEvent;
@@ -93,7 +100,12 @@ export default class Wepon extends Sprite {
       newWeponTilePos.tx,
       newWeponTilePos.ty
     );
-    this._sprite = this.scene.add.sprite(weponPos.x, weponPos.y, "chocopan", 0);
+    this._sprite = this.scene.add.sprite(
+      weponPos.x,
+      weponPos.y,
+      "chocopan",
+      WEPON_TEXTURE[this._animState]
+    );
     this._sprite.setOrigin(0);
     this._sprite.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);
 

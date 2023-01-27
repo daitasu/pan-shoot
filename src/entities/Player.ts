@@ -34,7 +34,7 @@ export default class Player extends Sprite {
       if (scene.anims.create(this.animConfig(animation)) === false) continue; // もしfalseが戻って来ればこの後何もしない
     }
 
-    this._sprite.anims.play("walk_stop");
+    this._sprite.anims.play("walk_front");
   }
 
   /*

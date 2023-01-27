@@ -142,14 +142,16 @@ export class Game extends Phaser.Scene {
     };
 
     // 武器の設置
-    wepon.setGround(
+    const weponTilePos = wepon.setGround(
       this.map,
       this.player.getCharactorState(),
       hitWeponAndEnemy
     );
 
-    // 武器の進行
-    wepon.startMove(this.map, hitWeponAndEnemy);
+    if (weponTilePos) {
+      // 武器の進行
+      wepon.startMove(this.map, hitWeponAndEnemy);
+    }
 
     // 連打制御
     const shootIntervalTimer = this.time.addEvent({

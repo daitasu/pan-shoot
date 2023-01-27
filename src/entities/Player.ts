@@ -104,7 +104,7 @@ export default class Player extends Sprite {
 
     this._tilePos = newTilePos;
     this._isWalking = true;
-    this.gridWalkTween(this._sprite, this._walkSpeed, moveDirs, () => {
+    this.gridWalkTween(this._sprite, moveDirs, () => {
       this._isWalking = false;
     });
   }

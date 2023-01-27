@@ -24,7 +24,7 @@ export default class Wepon extends Sprite {
   }
 
   private move(map: Map) {
-    if (this._isWalking) return;
+    if (this._isWalking || !this._tilePos) return;
 
     let newWeponTilePos: TilePos = this._tilePos;
 
@@ -43,7 +43,7 @@ export default class Wepon extends Sprite {
 
     this._tilePos = newWeponTilePos;
     this._isWalking = true;
-    this.gridWalkTween(this._sprite, this._walkSpeed, this._moveDirs, () => {
+    this.gridWalkTween(this._sprite, this._moveDirs, () => {
       this._isWalking = false;
     });
   }
@@ -52,7 +52,7 @@ export default class Wepon extends Sprite {
     map: Map,
     playerState: CharacterState,
     callbackAfterMove?: () => void
-  ): void {
+  ): TilePos | null {
     let newWeponTilePos: TilePos;
     const moveDirs: MoveDirs = { x: 0, y: 0 };
 
@@ -89,8 +89,12 @@ export default class Wepon extends Sprite {
       };
     }
 
-    // 外壁判定
-    if (map.isOutOfField(newWeponTilePos)) return;
+    if (
+      map.isOutOfField(newWeponTilePos) ||
+      map.isObstacleArea(newWeponTilePos)
+    ) {
+      return null;
+    }
 
     this._tilePos = newWeponTilePos;
     this._moveDirs = moveDirs;
@@ -110,6 +114,8 @@ export default class Wepon extends Sprite {
     this._sprite.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);
 
     if (callbackAfterMove) callbackAfterMove();
+
+    return this._tilePos;
   }
 
   private stopMove() {

@@ -9,21 +9,20 @@ import {
 export default class Sprite {
   protected scene: Phaser.Scene;
   protected _sprite: Phaser.GameObjects.Sprite;
-  protected _tilePos: { tx: number; ty: number };
+  protected _tilePos: TilePos;
   protected _isWalking: boolean;
   protected _animState: WalkAnimState;
   protected _walkSpeed: number;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, spriteConfig?: { speed: number }) {
     this.scene = scene;
     this._animState = "";
-    this._walkSpeed = ONE_TILE_SIZE;
+    this._walkSpeed = spriteConfig?.speed || 300;
   }
 
   protected gridWalkTween(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     target: any,
-    baseSpeed: number,
     moveDirs: MoveDirs,
     onComplete: () => void
   ) {
@@ -36,15 +35,15 @@ export default class Sprite {
       // X座標の移動を設定
       x: {
         getStart: () => target.x,
-        getEnd: () => target.x + baseSpeed * moveDirs.x,
+        getEnd: () => target.x + ONE_TILE_SIZE * moveDirs.x,
       },
       // X座標の移動を設定
       y: {
         getStart: () => target.y,
-        getEnd: () => target.y + baseSpeed * moveDirs.y,
+        getEnd: () => target.y + ONE_TILE_SIZE * moveDirs.y,
       },
       // アニメーションの時間
-      duration: 300,
+      duration: this._walkSpeed,
       // アニメーション終了時に発火するコールバック
       onComplete: () => {
         tween.stop(); // Tweenオブジェクトの削除

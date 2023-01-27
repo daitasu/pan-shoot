@@ -6,11 +6,14 @@ import { SPRITE_FRAME_SIZE } from "../constants";
 import Wepon from "../entities/Wepon";
 import { fontStyle } from "../utils/text";
 import { CharacterState, Text } from "../types/game";
+import GameControl from "../entities/GameControl";
 
 export class Game extends Phaser.Scene {
+  private gameControl: GameControl;
   private enemies: Enemy[];
   private map?: Map;
   private player?: Player;
+  private scoreText: Phaser.GameObjects.Text;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
   private shootInterval: boolean;
   private gameOver: boolean;
@@ -35,6 +38,21 @@ export class Game extends Phaser.Scene {
   }
 
   create() {
+    /*
+     * スコアの追加
+     */
+    this.scoreText = this.add.text(
+      700,
+      30,
+      "Score: 0",
+      fontStyle("#FFF", "24px")
+    );
+    this.scoreText.setOrigin(0.5);
+    this.scoreText.setDepth(1);
+
+    // gameControl の読み込み
+    this.gameControl = new GameControl();
+
     // map の読み込み
     this.map = new Map(this);
 
@@ -73,7 +91,15 @@ export class Game extends Phaser.Scene {
       }
     });
 
-    // TODO: 敵の残数を見て、出現させる
+    // 敵の残数を見て、出現させる
+    if (this.enemies.length < this.gameControl.getEnemyMaxCount()) {
+      const enemy = new Enemy(this.map, this);
+      this.enemies.push(enemy);
+
+      this.enemies.forEach((enemy) => {
+        enemy.startMove(this.player);
+      });
+    }
   }
 
   // 武器オブジェクトを呼び出し、設置・移動
@@ -83,14 +109,15 @@ export class Game extends Phaser.Scene {
     this.shootInterval = true;
 
     const wepon = new Wepon(this.map.mapGroundLayer, this);
-    wepon.setGround(this.player.getCharactorState());
 
     const hitWeponAndEnemy = () => {
       this.enemies.forEach((enemy, i) => {
         if (
           this.judgeHit(wepon.getCharactorState(), enemy.getCharactorState())
         ) {
-          // TODO: スコアアップ
+          // スコアアップ
+          this.gameControl.upScore();
+          this.scoreText.setText("Score: " + this.gameControl.getScore());
 
           // 武器の削除
           wepon.destroy();
@@ -101,6 +128,9 @@ export class Game extends Phaser.Scene {
         }
       });
     };
+
+    // 武器の設置
+    wepon.setGround(this.player.getCharactorState(), hitWeponAndEnemy);
 
     // 武器の進行
     wepon.startMove(hitWeponAndEnemy);

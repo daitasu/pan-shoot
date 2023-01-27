@@ -42,7 +42,7 @@ export default class Wepon extends Sprite {
     });
   }
 
-  setGround(playerState: CharacterState): void {
+  setGround(playerState: CharacterState, callbackAfterMove?: () => void): void {
     let newWeponTilePos: TilePos;
     const moveDirs: MoveDirs = { x: 0, y: 0 };
 
@@ -92,6 +92,8 @@ export default class Wepon extends Sprite {
     this._sprite = this.scene.add.sprite(weponPos.x, weponPos.y, "chocopan", 0);
     this._sprite.setOrigin(0);
     this._sprite.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);
+
+    if (callbackAfterMove) callbackAfterMove();
   }
 
   private stopMove() {

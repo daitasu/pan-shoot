@@ -60,7 +60,11 @@ export class Game extends Phaser.Scene {
     this.player = new Player(this.map, this);
 
     // enemy の読み込み
-    const enemy = new Enemy(this.map, this);
+    const enemy = new Enemy(
+      this.map,
+      this.gameControl.getEnemyMoveInterval(),
+      this
+    );
     this.enemies.push(enemy);
 
     this.enemies.forEach((enemy) => {
@@ -93,7 +97,11 @@ export class Game extends Phaser.Scene {
 
     // 敵の残数を見て、出現させる
     if (this.enemies.length < this.gameControl.getEnemyMaxCount()) {
-      const enemy = new Enemy(this.map, this);
+      const enemy = new Enemy(
+        this.map,
+        this.gameControl.getEnemyMoveInterval(),
+        this
+      );
       this.enemies.push(enemy);
 
       this.enemies.forEach((enemy) => {

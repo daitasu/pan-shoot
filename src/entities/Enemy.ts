@@ -8,11 +8,11 @@ import Player from "./Player";
 export default class Enemy extends Sprite {
   private _timer: Phaser.Time.TimerEvent;
 
-  constructor(map: Map, scene: Phaser.Scene) {
+  constructor(map: Map, moveInterval: number, scene: Phaser.Scene) {
     super(scene);
     this._isWalking = false;
     this._timer = scene.time.addEvent({
-      delay: 1500,
+      delay: moveInterval,
       loop: true,
     });
 

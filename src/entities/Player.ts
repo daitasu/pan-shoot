@@ -100,10 +100,7 @@ export default class Player extends Sprite {
       ty: newTilePos.ty + moveDirs.y,
     };
 
-    if (map.isOutOfField(newTilePos)) return;
-
-    // 静mapの衝突判定
-    if (map.isObstacleArea(newTilePos)) return;
+    if (map.isOutOfField(newTilePos) || map.isObstacleArea(newTilePos)) return;
 
     this._tilePos = newTilePos;
     this._isWalking = true;

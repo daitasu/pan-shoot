@@ -27,8 +27,11 @@ export default class Wepon extends Sprite {
     };
 
     // 外壁判定
-    if (map.isOutOfField(newWeponTilePos)) {
-      this._sprite.destroy();
+    if (
+      map.isOutOfField(newWeponTilePos) ||
+      map.isObstacleArea(newWeponTilePos)
+    ) {
+      this.destroy();
     }
 
     this._tilePos = newWeponTilePos;

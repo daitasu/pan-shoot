@@ -1,5 +1,5 @@
 ﻿import { TilePos, MoveDirs, CharacterState } from "../types/game";
-import { abs } from "../utils/math";
+import { abs, random } from "../utils/math";
 import Sprite from "./Sprite";
 import { ONE_TILE_SIZE } from "../constants";
 import Map from "./Map";
@@ -19,15 +19,15 @@ export default class Enemy extends Sprite {
     const groundTileLength = map.getGroundTileLendth();
 
     // 出現位置を端から算出
-    if (Phaser.Math.Between(0, 1) === 0) {
+    if (random(0, 1) === 0) {
       this._tilePos = {
-        tx: Phaser.Math.Between(0, 1) === 0 ? -1 : groundTileLength.xl,
-        ty: Phaser.Math.Between(0 - 1, groundTileLength.yl),
+        tx: random(0, 1) === 0 ? -1 : groundTileLength.xl,
+        ty: random(0 - 1, groundTileLength.yl),
       };
     } else {
       this._tilePos = {
-        tx: Phaser.Math.Between(0 - 1, groundTileLength.xl),
-        ty: Phaser.Math.Between(0, 1) === 0 ? -1 : groundTileLength.yl,
+        tx: random(0 - 1, groundTileLength.xl),
+        ty: random(0, 1) === 0 ? -1 : groundTileLength.yl,
       };
     }
 
@@ -82,7 +82,7 @@ export default class Enemy extends Sprite {
     } else {
       this.setNewPosition(
         playerState.tilePos,
-        Phaser.Math.Between(0, 1) === 0 ? "tx" : "ty"
+        random(0, 1) === 0 ? "tx" : "ty"
       );
     }
   }

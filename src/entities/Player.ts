@@ -1,6 +1,6 @@
 ﻿import { WalkAnimState, TilePos, MoveDirs } from "../types/game";
 import Map from "./Map";
-import { ONE_TILE_SIZE } from "../constants";
+import { ONE_TILE_SIZE, GAMEOVER_TINT } from "../constants";
 import Sprite from "./Sprite";
 
 export default class Player extends Sprite {
@@ -31,29 +31,12 @@ export default class Player extends Sprite {
 
     for (const animation of this.animations) {
       // ヒーローアニメーションの数だけループ
-      if (scene.anims.create(this.animConfig(animation)) === false) continue; // もしfalseが戻って来ればこの後何もしない
+      if (scene.anims.create(this.animConfig("katopan", animation)) === false) {
+        continue; // もしfalseが戻って来ればこの後何もしない
+      }
     }
 
     this._sprite.anims.play("walk_front");
-  }
-
-  /*
-   * frame 設定を簡易にする
-   */
-  private animConfig(config: {
-    key: string;
-    frameStart: number;
-    frameEnd: number;
-  }): Phaser.Types.Animations.Animation {
-    return {
-      key: config.key,
-      frames: this.scene.anims.generateFrameNumbers("katopan", {
-        start: config.frameStart,
-        end: config.frameEnd,
-      }),
-      frameRate: 8,
-      repeat: -1,
-    };
   }
 
   /*
@@ -88,10 +71,10 @@ export default class Player extends Sprite {
       this._animState = newAnimState;
     }
 
-    this.movePlayer(moveDirs, map);
+    this.move(map, moveDirs);
   }
 
-  movePlayer(moveDirs: MoveDirs, map: Map) {
+  move(map: Map, moveDirs: MoveDirs) {
     let newTilePos: TilePos = this._tilePos;
 
     // 外壁判定
@@ -104,12 +87,13 @@ export default class Player extends Sprite {
 
     this._tilePos = newTilePos;
     this._isWalking = true;
+
     this.gridWalkTween(this._sprite, moveDirs, () => {
       this._isWalking = false;
     });
   }
 
-  setTint(tint: number) {
-    this._sprite.setTint(tint);
+  destroy() {
+    this._sprite.setTint(GAMEOVER_TINT);
   }
 }

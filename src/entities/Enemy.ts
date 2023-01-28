@@ -62,14 +62,13 @@ export default class Enemy extends Sprite {
       ty: enemyNewTilePos.ty + moveDirs.y,
     };
 
-    this._tilePos = enemyNewTilePos;
-
     this.gridWalkTween(this._sprite, moveDirs, () => {
+      this._tilePos = enemyNewTilePos;
       this._isWalking = false;
     });
   }
 
-  private move(playerState: CharacterState) {
+  protected move(playerState: CharacterState) {
     if (this._isWalking) return;
 
     // x, y 方向のうちより遠い距離を詰める

@@ -23,7 +23,7 @@ export default class Wepon extends Sprite {
     });
   }
 
-  private move(map: Map) {
+  protected move(map: Map): void {
     if (this._isWalking || !this._tilePos) return;
 
     let newWeponTilePos: TilePos = this._tilePos;
@@ -43,6 +43,7 @@ export default class Wepon extends Sprite {
 
     this._tilePos = newWeponTilePos;
     this._isWalking = true;
+
     this.gridWalkTween(this._sprite, this._moveDirs, () => {
       this._isWalking = false;
     });
@@ -118,7 +119,7 @@ export default class Wepon extends Sprite {
     return this._tilePos;
   }
 
-  private stopMove() {
+  protected stopMove() {
     this._timer.remove();
   }
 

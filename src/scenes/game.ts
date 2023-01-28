@@ -166,7 +166,7 @@ export class Game extends Phaser.Scene {
   changeToGameOver() {
     this.gameOver = true;
 
-    this.player.setTint(0xff0000);
+    this.player.destroy();
 
     const background = this.add.rectangle(0, 0, 800, 600, 0x333333, 0.6);
     background.setScale(2);

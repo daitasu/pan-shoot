@@ -6,7 +6,7 @@ import {
   CharacterState,
 } from "../types/game";
 
-export default class Sprite {
+export default abstract class Sprite {
   protected scene: Phaser.Scene;
   protected _sprite: Phaser.GameObjects.Sprite;
   protected _tilePos: TilePos;
@@ -20,6 +20,35 @@ export default class Sprite {
     this._walkSpeed = spriteConfig?.animDuration || BASE_ANIM_DURATION;
   }
 
+  protected abstract move(...attrs: any[]): void;
+
+  abstract destroy(): void;
+
+  /*
+   * frame 設定を簡易にする
+   */
+  protected animConfig(
+    frameKey: string,
+    config: {
+      key: string;
+      frameStart: number;
+      frameEnd: number;
+    }
+  ): Phaser.Types.Animations.Animation {
+    return {
+      key: config.key,
+      frames: this.scene.anims.generateFrameNumbers(frameKey, {
+        start: config.frameStart,
+        end: config.frameEnd,
+      }),
+      frameRate: 8,
+      repeat: -1,
+    };
+  }
+
+  /*
+   * 配置移動時にアニメーションを入れる
+   */
   protected gridWalkTween(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     target: any,
@@ -46,8 +75,8 @@ export default class Sprite {
       duration: this._walkSpeed,
       // アニメーション終了時に発火するコールバック
       onComplete: () => {
-        tween.stop(); // Tweenオブジェクトの削除
-        onComplete(); // 引数の関数実行
+        tween.stop();
+        onComplete();
       },
     });
   }

@@ -17,7 +17,7 @@ export default class Player extends Sprite {
     super(scene);
 
     this._isWalking = false;
-    this._tilePos = { tx: 10, ty: 8 }; // player 初期位置をタイル基準で設定
+    this._tilePos = { tx: 10, ty: 8 };
 
     const groundLayer = map.getGroundLayer();
     const playerPos: Phaser.Math.Vector2 = groundLayer.tileToWorldXY(
@@ -45,7 +45,7 @@ export default class Player extends Sprite {
   controlPlayer(cursors: Phaser.Types.Input.Keyboard.CursorKeys, map: Map) {
     if (this._isWalking) return;
 
-    let newAnimState: WalkAnimState = "";
+    let newAnimState: WalkAnimState = this._animState;
     const moveDirs: MoveDirs = { x: 0, y: 0 };
 
     if (cursors.up.isDown) {

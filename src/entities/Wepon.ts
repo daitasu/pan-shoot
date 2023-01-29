@@ -14,13 +14,15 @@ export default class Wepon extends Sprite {
   private _moveDirs: MoveDirs;
   private _timer: Phaser.Time.TimerEvent;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(map: Map, playerState: CharacterState, scene: Phaser.Scene) {
     super(scene, { animDuration: BASE_ANIM_DURATION * 0.7 });
 
     this._timer = scene.time.addEvent({
       delay: 100,
       loop: true,
     });
+
+    this.setGround(map, playerState, scene);
   }
 
   protected move(map: Map): void {
@@ -49,52 +51,39 @@ export default class Wepon extends Sprite {
     });
   }
 
-  setGround(
-    map: Map,
-    playerState: CharacterState,
-    callbackAfterMove?: () => void
-  ): TilePos | null {
+  setGround(map: Map, playerState: CharacterState, scene: Phaser.Scene): void {
     let newWeponTilePos: TilePos;
     const moveDirs: MoveDirs = { x: 0, y: 0 };
 
-    if (
-      playerState.animState === "walk_front" ||
-      playerState.animState === ""
-    ) {
-      this._animState = "walk_front";
-      moveDirs.y = 1;
-      newWeponTilePos = {
-        tx: playerState.tilePos.tx,
-        ty: playerState.tilePos.ty + 1,
-      };
-    } else if (playerState.animState === "walk_left") {
-      this._animState = "walk_left";
-      moveDirs.x = -1;
-      newWeponTilePos = {
-        tx: playerState.tilePos.tx - 1,
-        ty: playerState.tilePos.ty,
-      };
-    } else if (playerState.animState === "walk_right") {
-      this._animState = "walk_right";
-      moveDirs.x = 1;
-      newWeponTilePos = {
-        tx: playerState.tilePos.tx + 1,
-        ty: playerState.tilePos.ty,
-      };
-    } else if (playerState.animState === "walk_back") {
-      this._animState = "walk_back";
-      moveDirs.y = -1;
-      newWeponTilePos = {
-        tx: playerState.tilePos.tx,
-        ty: playerState.tilePos.ty - 1,
-      };
+    this._animState = playerState.animState;
+
+    switch (this._animState) {
+      case "walk_front":
+        moveDirs.y = 1;
+        break;
+      case "walk_left":
+        moveDirs.x = -1;
+        break;
+      case "walk_right":
+        moveDirs.x = 1;
+        break;
+      case "walk_back":
+        moveDirs.y = -1;
+        break;
+      default:
+        return;
     }
+
+    newWeponTilePos = {
+      tx: playerState.tilePos.tx + moveDirs.x,
+      ty: playerState.tilePos.ty + moveDirs.y,
+    };
 
     if (
       map.isOutOfField(newWeponTilePos) ||
       map.isObstacleArea(newWeponTilePos)
     ) {
-      return null;
+      return;
     }
 
     this._tilePos = newWeponTilePos;
@@ -105,7 +94,7 @@ export default class Wepon extends Sprite {
       newWeponTilePos.tx,
       newWeponTilePos.ty
     );
-    this._sprite = this.scene.add.sprite(
+    this._sprite = scene.add.sprite(
       weponPos.x,
       weponPos.y,
       "chocopan",
@@ -113,10 +102,6 @@ export default class Wepon extends Sprite {
     );
     this._sprite.setOrigin(0);
     this._sprite.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);
-
-    if (callbackAfterMove) callbackAfterMove();
-
-    return this._tilePos;
   }
 
   protected stopMove() {

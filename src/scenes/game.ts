@@ -26,7 +26,6 @@ export class Game extends Phaser.Scene {
 
   preload() {
     this.load.image("mapTiles", `./images/map_tile.png`);
-    // this.load.image("chocopan", `./images/chocopan.png`);
     this.load.spritesheet("chocopan", `./images/chocopan.png`, {
       frameWidth: SPRITE_FRAME_SIZE,
       frameHeight: SPRITE_FRAME_SIZE,
@@ -120,7 +119,8 @@ export class Game extends Phaser.Scene {
 
     this.shootInterval = true;
 
-    const wepon = new Wepon(this);
+    // 武器の設置
+    const wepon = new Wepon(this.map, this.player.getCharactorState(), this);
 
     const hitWeponAndEnemy = () => {
       this.enemies.forEach((enemy, i) => {
@@ -141,14 +141,9 @@ export class Game extends Phaser.Scene {
       });
     };
 
-    // 武器の設置
-    const weponTilePos = wepon.setGround(
-      this.map,
-      this.player.getCharactorState(),
-      hitWeponAndEnemy
-    );
+    if (wepon.getCharactorState().tilePos) {
+      hitWeponAndEnemy();
 
-    if (weponTilePos) {
       // 武器の進行
       wepon.startMove(this.map, hitWeponAndEnemy);
     }

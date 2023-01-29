@@ -16,7 +16,7 @@ export default abstract class Sprite {
 
   constructor(scene: Phaser.Scene, spriteConfig?: { animDuration: number }) {
     this.scene = scene;
-    this._animState = "";
+    this._animState = "walk_front";
     this._walkSpeed = spriteConfig?.animDuration || BASE_ANIM_DURATION;
   }
 

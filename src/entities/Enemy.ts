@@ -10,6 +10,7 @@ export default class Enemy extends Sprite {
 
   constructor(map: Map, moveInterval: number, scene: Phaser.Scene) {
     super(scene);
+
     this._isWalking = false;
     this._timer = scene.time.addEvent({
       delay: moveInterval,
@@ -68,10 +69,12 @@ export default class Enemy extends Sprite {
     });
   }
 
+  /*
+   * x, y方向のうち、プレイヤーとの距離が遠い方を優先して進む
+   */
   protected move(playerState: CharacterState) {
     if (this._isWalking) return;
 
-    // x, y 方向のうちより遠い距離を詰める
     const xTileCntToPlayer = abs(playerState.tilePos.tx - this._tilePos.tx);
     const yTileCntToPlayer = abs(playerState.tilePos.ty - this._tilePos.ty);
 

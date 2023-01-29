@@ -9,14 +9,17 @@ import {
 export default abstract class Sprite {
   protected scene: Phaser.Scene;
   protected _sprite: Phaser.GameObjects.Sprite;
-  protected _tilePos: TilePos;
-  protected _isWalking: boolean;
+
   protected _animState: WalkAnimState;
+  protected _tilePos: TilePos;
+
+  protected _isWalking: boolean;
   protected _walkSpeed: number;
 
   constructor(scene: Phaser.Scene, spriteConfig?: { animDuration: number }) {
     this.scene = scene;
     this._animState = "walk_front";
+    this._isWalking = false;
     this._walkSpeed = spriteConfig?.animDuration || BASE_ANIM_DURATION;
   }
 
@@ -85,6 +88,7 @@ export default abstract class Sprite {
     return {
       animState: this._animState,
       tilePos: this._tilePos,
+      isWalking: this._isWalking,
     };
   }
 }

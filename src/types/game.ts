@@ -8,9 +8,11 @@ export type WalkAnimState =
   | "walk_front"
   | "walk_back"
   | "walk_left"
-  | "walk_right";
+  | "walk_right"
+  | "";
 
 export type CharacterState = {
   animState: WalkAnimState;
   tilePos: TilePos;
+  isWalking: boolean;
 };

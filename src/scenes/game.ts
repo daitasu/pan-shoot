@@ -6,10 +6,10 @@ import { SPRITE_FRAME_SIZE } from "../constants";
 import Wepon from "../entities/Wepon";
 import { fontStyle } from "../utils/text";
 import { CharacterState, Text } from "../types/game";
-import GameControl from "../entities/GameControl";
+import GameManager from "../entities/GameManager";
 
 export class Game extends Phaser.Scene {
-  private gameControl: GameControl;
+  private gameManager: GameManager;
   private enemies: Enemy[];
   private map?: Map;
   private player?: Player;
@@ -53,8 +53,8 @@ export class Game extends Phaser.Scene {
     this.scoreText.setOrigin(0.5);
     this.scoreText.setDepth(1);
 
-    // gameControl の読み込み
-    this.gameControl = new GameControl();
+    // gameManager の読み込み
+    this.gameManager = new GameManager();
 
     // map の読み込み
     this.map = new Map(this);
@@ -65,7 +65,7 @@ export class Game extends Phaser.Scene {
     // enemy の読み込み
     const enemy = new Enemy(
       this.map,
-      this.gameControl.getEnemyMoveInterval(),
+      this.gameManager.getEnemyMoveInterval(),
       this
     );
     this.enemies.push(enemy);
@@ -84,7 +84,9 @@ export class Game extends Phaser.Scene {
       return;
     }
     // player の更新判定
-    this.player.controlPlayer(this.cursors, this.map);
+    if (!this.player.getCharactorState().isWalking) {
+      this.gameManager.controlPlayer(this.cursors, this.player, this.map);
+    }
 
     // 敵と人のHIT判定
     this.enemies.forEach((enemy) => {
@@ -99,10 +101,10 @@ export class Game extends Phaser.Scene {
     });
 
     // 敵の残数を見て、出現させる
-    if (this.enemies.length < this.gameControl.getEnemyMaxCount()) {
+    if (this.enemies.length < this.gameManager.getEnemyMaxCount()) {
       const enemy = new Enemy(
         this.map,
-        this.gameControl.getEnemyMoveInterval(),
+        this.gameManager.getEnemyMoveInterval(),
         this
       );
       this.enemies.push(enemy);
@@ -128,8 +130,8 @@ export class Game extends Phaser.Scene {
           this.judgeHit(wepon.getCharactorState(), enemy.getCharactorState())
         ) {
           // スコアアップ
-          this.gameControl.upScore();
-          this.scoreText.setText("Score: " + this.gameControl.getScore());
+          this.gameManager.upScore();
+          this.scoreText.setText("Score: " + this.gameManager.getScore());
 
           // 武器の削除
           wepon.destroy();

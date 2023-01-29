@@ -58,6 +58,7 @@ export default class Wepon extends Sprite {
     this._animState = playerState.animState;
 
     switch (this._animState) {
+      case "":
       case "walk_front":
         moveDirs.y = 1;
         break;

@@ -1,5 +1,6 @@
 ﻿import { ONE_TILE_SIZE } from "../constants";
 import { MapGround, TilePos } from "../types/game";
+
 export default class Map {
   private map?: Phaser.Tilemaps.Tilemap;
   private tiles?: Phaser.Tilemaps.Tileset;
@@ -37,7 +38,10 @@ export default class Map {
   // 外壁判定
   isOutOfField(tilePos: TilePos): boolean {
     return (
-      tilePos.tx < 0 || tilePos.ty < 0 || tilePos.tx >= 20 || tilePos.ty >= 15
+      tilePos.tx < 0 ||
+      tilePos.ty < 0 ||
+      tilePos.tx >= this.getGroundTileLendth().xl ||
+      tilePos.ty >= this.getGroundTileLendth().yl
     );
   }
 

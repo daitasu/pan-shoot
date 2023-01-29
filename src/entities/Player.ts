@@ -39,39 +39,16 @@ export default class Player extends Sprite {
     this._sprite.anims.play("walk_front");
   }
 
-  /*
-   * playerの移動
-   */
-  controlPlayer(cursors: Phaser.Types.Input.Keyboard.CursorKeys, map: Map) {
-    if (this._isWalking) return;
-
-    let newAnimState: WalkAnimState = this._animState;
-    const moveDirs: MoveDirs = { x: 0, y: 0 };
-
-    if (cursors.up.isDown) {
-      newAnimState = "walk_back";
-      moveDirs.y = -1;
-    } else if (cursors.down.isDown) {
-      newAnimState = "walk_front";
-      moveDirs.y = 1;
-    } else if (cursors.left.isDown) {
-      newAnimState = "walk_left";
-      moveDirs.x = -1;
-    } else if (cursors.right.isDown) {
-      newAnimState = "walk_right";
-      moveDirs.x = 1;
-    } else {
+  changeAnimState(animState: WalkAnimState | ""): void {
+    if (animState === "") {
       this._sprite.anims.stop();
       return;
     }
 
-    // 前回と状態が異なればplayer 挙動を変更
-    if (this._animState != newAnimState) {
-      this._sprite.anims.play(newAnimState);
-      this._animState = newAnimState;
+    if (this._animState != animState) {
+      this._sprite.anims.play(animState);
+      this._animState = animState;
     }
-
-    this.move(map, moveDirs);
   }
 
   move(map: Map, moveDirs: MoveDirs) {

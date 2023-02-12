@@ -1,7 +1,8 @@
 {
+  "include": ["./node_modules/phaser/types/phaser.d.ts"],
   "compilerOptions": {
     "target": "ES6",
-    "module": "commonjs",
+    "module": "es2022",
     "sourceMap": true,
     "noImplicitAny": false,
     "strict": false

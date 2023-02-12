@@ -4,7 +4,7 @@ import { MapGround, TilePos } from "../types/game";
 export default class Map {
   private map?: Phaser.Tilemaps.Tilemap;
   private tiles?: Phaser.Tilemaps.Tileset;
-  private ground_layer?: Phaser.Tilemaps.TilemapLayer;
+  private ground_layer: Phaser.Tilemaps.TilemapLayer;
 
   private ground: MapGround = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -33,6 +33,10 @@ export default class Map {
 
     this.tiles = this.map.addTilesetImage("mapTiles");
     this.ground_layer = this.map.createLayer(0, this.tiles, 0, 0);
+  }
+
+  tileToWorldXY(tilePos: TilePos): Phaser.Math.Vector2 {
+    return this.ground_layer.tileToWorldXY(tilePos.tx, tilePos.ty);
   }
 
   // 外壁判定

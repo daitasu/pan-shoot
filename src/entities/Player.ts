@@ -19,11 +19,7 @@ export default class Player extends Sprite {
     this._isWalking = false;
     this._tilePos = { tx: 10, ty: 8 };
 
-    const groundLayer = map.getGroundLayer();
-    const playerPos: Phaser.Math.Vector2 = groundLayer.tileToWorldXY(
-      this._tilePos.tx,
-      this._tilePos.ty
-    );
+    const playerPos: Phaser.Math.Vector2 = map.tileToWorldXY(this._tilePos);
 
     this._sprite = scene.add.sprite(playerPos.x, playerPos.y, "katopan", 0);
     this._sprite.setOrigin(0);

@@ -32,11 +32,7 @@ export default class Enemy extends Sprite {
       };
     }
 
-    const groundLayer = map.getGroundLayer();
-    const enemyPos: Phaser.Math.Vector2 = groundLayer.tileToWorldXY(
-      this._tilePos.tx,
-      this._tilePos.ty
-    );
+    const enemyPos: Phaser.Math.Vector2 = map.tileToWorldXY(this._tilePos);
     this._sprite = scene.add.sprite(enemyPos.x, enemyPos.y, "demon", 0);
     this._sprite.setOrigin(0);
     this._sprite.setDisplaySize(ONE_TILE_SIZE, ONE_TILE_SIZE);

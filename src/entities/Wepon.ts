@@ -90,11 +90,8 @@ export default class Wepon extends Sprite {
     this._tilePos = newWeponTilePos;
     this._moveDirs = moveDirs;
 
-    const groundLayer = map.getGroundLayer();
-    const weponPos: Phaser.Math.Vector2 = groundLayer.tileToWorldXY(
-      newWeponTilePos.tx,
-      newWeponTilePos.ty
-    );
+    const weponPos: Phaser.Math.Vector2 = map.tileToWorldXY(this._tilePos);
+
     this._sprite = scene.add.sprite(
       weponPos.x,
       weponPos.y,

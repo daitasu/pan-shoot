@@ -7,14 +7,16 @@ import Wepon from "../entities/Wepon";
 import { fontStyle } from "../utils/text";
 import { CharacterState, Text } from "../types/game";
 import GameManager from "../entities/GameManager";
+import GameOverText from "../entities/text/GameOverText";
+import RetryText from "../entities/text/RetryText";
 
 export class Game extends Phaser.Scene {
   private gameManager: GameManager;
   private enemies: Enemy[];
-  private map?: Map;
-  private player?: Player;
+  private map: Map;
+  private player: Player;
   private scoreText: Phaser.GameObjects.Text;
-  private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
+  private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   private shootInterval: boolean;
   private gameOver: boolean;
 
@@ -168,39 +170,8 @@ export class Game extends Phaser.Scene {
     const background = this.add.rectangle(0, 0, 800, 600, 0x333333, 0.6);
     background.setScale(2);
 
-    const gameOverText: Text = this.add.text(
-      400,
-      250,
-      "GAME OVER",
-      fontStyle("#FF0000", "100px")
-    );
-    gameOverText.setOrigin(0.5);
-    gameOverText.setDepth(1);
-
-    const retryText: Text = this.add.text(
-      400,
-      500,
-      "RETRY",
-      fontStyle("#FFF", "70px")
-    );
-    retryText.setOrigin(0.5);
-    retryText.setDepth(1);
-
-    retryText.setInteractive({
-      useHandCursor: true,
-    });
-
-    retryText.on("pointerover", () => {
-      retryText.setStyle({ color: "#F11C32" });
-    });
-
-    retryText.on("pointerout", () => {
-      retryText.setStyle({ color: "#FFF" });
-    });
-
-    retryText.on("pointerdown", () => {
-      this.scene.start("preload");
-    });
+    new GameOverText(this);
+    new RetryText(this);
   }
 
   // 衝突判定

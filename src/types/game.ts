@@ -16,3 +16,10 @@ export type CharacterState = {
   tilePos: TilePos;
   isWalking: boolean;
 };
+
+export type TextOptions = {
+  color?: string;
+  size?: number;
+  origin?: number;
+  depth?: number;
+};

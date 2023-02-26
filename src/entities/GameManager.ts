@@ -16,8 +16,6 @@ export default class GameManager {
     player: Player,
     map: Map
   ) {
-    // console.log("start:");
-
     let newAnimState: WalkAnimState = "";
     const moveDirs: MoveDirs = { x: 0, y: 0 };
 

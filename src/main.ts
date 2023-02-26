@@ -1,6 +1,7 @@
 ﻿import * as Phaser from "phaser";
 import { Preload } from "./scenes/preload";
 import { Game } from "./scenes/game";
+import { Mypage } from "./scenes/mypage";
 
 //ゲームの基本設定
 const config: Phaser.Types.Core.GameConfig = {
@@ -28,6 +29,7 @@ export class Main extends Phaser.Game {
     // シーンにキーを割り振って登録
     this.scene.add("preload", Preload, false);
     this.scene.add("game", Game, false);
+    this.scene.add("mypage", Mypage, false);
 
     // シーンをスタート
     this.scene.start("preload");

@@ -12,6 +12,10 @@ export default class ClickableText extends PlainText {
     const textOptions = {
       ...DEFAULT_TEXT_OPTIONS,
       ...options,
+      style: {
+        ...DEFAULT_TEXT_OPTIONS.style,
+        ...options?.style,
+      },
     };
 
     super(scene, position, text, textOptions);
@@ -26,7 +30,7 @@ export default class ClickableText extends PlainText {
     });
 
     innerText.on("pointerout", () => {
-      innerText.setStyle({ color: textOptions.color });
+      innerText.setStyle({ color: textOptions.style.color });
     });
   }
 

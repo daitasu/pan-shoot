@@ -15,14 +15,19 @@ export default class PlainText {
     const textOptions = {
       ...DEFAULT_TEXT_OPTIONS,
       ...options,
+      style: {
+        ...DEFAULT_TEXT_OPTIONS.style,
+        ...options?.style,
+      },
     };
 
     this.innerText = scene.add.text(
       position.x,
       position.y,
       text,
-      fontStyle(textOptions.color, textOptions.size + "px")
+      textOptions.style
     );
+
     this.innerText.setOrigin(textOptions.origin);
     this.innerText.setDepth(textOptions.depth);
   }

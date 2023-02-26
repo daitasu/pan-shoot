@@ -1,9 +1,15 @@
 ﻿import * as Phaser from "phaser";
 import { fontStyle } from "../utils/text";
 import { Text } from "../types/game";
+import { isExactPath } from "../utils/routes";
+
 export class Preload extends Phaser.Scene {
   init() {
     console.log("Preloading");
+
+    if (isExactPath("/mypage")) {
+      this.scene.start("mypage");
+    }
   }
 
   create() {

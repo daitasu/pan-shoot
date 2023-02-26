@@ -18,8 +18,7 @@ export type CharacterState = {
 };
 
 export type TextOptions = {
-  color?: string;
-  size?: number;
   origin?: number;
   depth?: number;
+  style?: Phaser.Types.GameObjects.Text.TextStyle;
 };

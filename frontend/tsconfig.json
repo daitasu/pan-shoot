@@ -1,5 +1,8 @@
 {
-  "include": ["./node_modules/phaser/types/phaser.d.ts"],
+  "include": [
+    "./node_modules/phaser/types/phaser.d.ts",
+    "./node_modules/vite/client.d.ts"
+  ],
   "compilerOptions": {
     "target": "ES6",
     "module": "es2022",

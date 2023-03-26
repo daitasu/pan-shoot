@@ -9,6 +9,7 @@ import { CharacterState, Text } from "../types/game";
 import GameManager from "../entities/GameManager";
 import GameOverText from "../entities/text/GameOverText";
 import RetryText from "../entities/text/RetryText";
+import LoginForSaveText from "../entities/text/LoginForSaveText";
 
 export class Game extends Phaser.Scene {
   private gameManager: GameManager;
@@ -172,6 +173,7 @@ export class Game extends Phaser.Scene {
 
     new GameOverText(this);
     new RetryText(this);
+    new LoginForSaveText(this);
   }
 
   // 衝突判定

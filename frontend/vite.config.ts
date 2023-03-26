@@ -8,7 +8,7 @@ export default defineConfig({
   envDir: "../",
   publicDir: "../public",
   build: {
-    outDir: "../dist",
+    outDir: "../../dist",
     rollupOptions: {
       input: {
         main: resolve(root, "index.html"),

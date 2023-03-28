@@ -6,6 +6,8 @@ import (
 )
 
 func main() {
+	setupDB()
+
 	mux := http.NewServeMux()
 
 	mux.Handle("/", http.FileServer(http.Dir("./dist/")))

@@ -1,4 +1,4 @@
-module example.com/m/v2
+module github.com/daitasu/pan-shoot
 
 go 1.19
 

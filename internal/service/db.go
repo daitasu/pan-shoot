@@ -1,4 +1,4 @@
-package main
+package service
 
 import (
 	"database/sql"
@@ -8,7 +8,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func setupDB() {
+func SetupDB() {
 	dbURI := "user1:password@tcp(127.0.0.1:3306)/devdb"
 
 	db, err := sql.Open("mysql", dbURI)

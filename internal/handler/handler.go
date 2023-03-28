@@ -1,4 +1,4 @@
-package main
+package handler
 
 import (
 	"context"
@@ -55,16 +55,16 @@ func isGoogleAuthError(err error) bool {
 	return strings.HasPrefix(err.Error(), "googleapi: Error 401:")
 }
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	url := googleOauthConfig.AuthCodeURL("state")
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 }
 
-func fakeHandler(w http.ResponseWriter, r *http.Request) {
+func FakeHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Fake API")
 }
 
-func googleCallbackHandler(w http.ResponseWriter, r *http.Request) {
+func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	code := r.FormValue("code")
 	token, err := googleOauthConfig.Exchange(oauth2.NoContext, code)
 	if err != nil {
@@ -86,7 +86,7 @@ func googleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/?scene=mypage", http.StatusSeeOther)
 }
 
-func getUserInfoHandler(w http.ResponseWriter, r *http.Request) {
+func GetUserInfoHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("access_token")
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)

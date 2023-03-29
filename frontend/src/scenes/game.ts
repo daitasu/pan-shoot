@@ -25,6 +25,7 @@ export class Game extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
     this.gameOver = false;
     this.enemies = [];
+    sessionStorage.clear();
   }
 
   preload() {
@@ -170,6 +171,8 @@ export class Game extends Phaser.Scene {
 
     const background = this.add.rectangle(0, 0, 800, 600, 0x333333, 0.6);
     background.setScale(2);
+
+    sessionStorage.setItem("score", String(this.gameManager.getScore()));
 
     new GameOverText(this);
     new RetryText(this);

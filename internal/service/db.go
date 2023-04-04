@@ -8,14 +8,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func SetupDB() {
-	dbURI := "user1:password@tcp(127.0.0.1:3306)/devdb"
+func SetupDB() *sql.DB {
+	dbURI := "user1:password@tcp(127.0.0.1:3306)/devdb?parseTime=true"
 
 	db, err := sql.Open("mysql", dbURI)
 	if err != nil {
 		log.Fatalf("Failed to open DB: %v", err)
 	}
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
@@ -24,4 +23,5 @@ func SetupDB() {
 
 	// print a success message if the connection was successful
 	fmt.Println("Connected to database!")
+	return db
 }

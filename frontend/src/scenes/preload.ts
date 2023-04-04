@@ -14,10 +14,15 @@ export class Preload extends Phaser.Scene {
     }
   }
 
+  preload() {
+    this.load.image("main_visual", "images/game_main_visual.png");
+  }
+
   create() {
     const BK_COLOR = "#101617";
 
     this.cameras.main.setBackgroundColor(BK_COLOR);
+    const mainVisual = this.add.image(400, 250, "main_visual");
     const startText: Text = this.add.text(
       400,
       520,
@@ -26,14 +31,14 @@ export class Preload extends Phaser.Scene {
     );
     const descriptionText: Text = this.add.text(
       400,
-      430,
-      "パンを放とう\n\n移動: ←↑↓→\nshoot: space",
+      435,
+      "移動: ←↑↓→\nshoot: space",
       fontStyle("#DDD", "18px")
     );
 
+    mainVisual.setScale(0.85);
     startText.setOrigin(0.5);
-    descriptionText.setOrigin(0.5);
-    descriptionText.setAlign("center");
+    descriptionText.setOrigin(0.5).setAlign("center");
 
     startText.setInteractive({
       useHandCursor: true,

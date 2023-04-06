@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
+import updateIndexHtml from "./src/scripts/buildPlugin";
 
 const root = "src";
 
@@ -8,14 +9,14 @@ export default defineConfig({
   envDir: "../",
   publicDir: "../public",
   build: {
-    outDir: "../../dist",
+    outDir: "../dist",
     rollupOptions: {
       input: {
         main: resolve(root, "index.html"),
-        // authorize: resolve(root, "authorize/index.html"),
       },
     },
   },
+  plugins: [updateIndexHtml()],
   server: {
     port: 9000,
   },

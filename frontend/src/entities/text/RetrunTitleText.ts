@@ -11,7 +11,7 @@ export default class ReturnTitleText extends ClickableText {
     const innerText = super.getTextObject();
 
     innerText.on("pointerdown", () => {
-      window.location.assign("/");
+      window.location.assign("/static/");
       scene.scene.start("preload");
     });
   }

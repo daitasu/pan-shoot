@@ -5,7 +5,7 @@ import Player from "../entities/Player";
 import { SPRITE_FRAME_SIZE } from "../constants";
 import Wepon from "../entities/Wepon";
 import { fontStyle } from "../utils/text";
-import { CharacterState, Text } from "../types/game";
+import { CharacterState } from "../types/game";
 import GameManager from "../entities/GameManager";
 import GameOverText from "../entities/text/GameOverText";
 import RetryText from "../entities/text/RetryText";

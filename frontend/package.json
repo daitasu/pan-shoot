@@ -17,6 +17,7 @@
     "phaser": "^3.55.2"
   },
   "devDependencies": {
+    "@types/node": "^18.15.11",
     "@typescript-eslint/eslint-plugin": "^5.48.1",
     "@typescript-eslint/parser": "^5.48.1",
     "eslint": "^8.32.0",

@@ -50,7 +50,7 @@ func GoogleCallbackHandler(googleOauthConfig *oauth2.Config) http.HandlerFunc {
 		http.SetCookie(w, &cookie)
 	
 		// Redirect the user to the homepage.
-		http.Redirect(w, r, "/?scene=mypage", http.StatusSeeOther)
+		http.Redirect(w, r, "/static/?scene=mypage", http.StatusSeeOther)
 	}
 }
 

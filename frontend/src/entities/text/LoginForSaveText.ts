@@ -11,7 +11,7 @@ export default class LoginForSaveText extends ClickableText {
     const innerText = super.getTextObject();
 
     innerText.on("pointerdown", async () => {
-      window.location.href = window.location.origin + "?scene=mypage";
+      window.location.href = window.location.origin + "/static/?scene=mypage";
     });
   }
 }

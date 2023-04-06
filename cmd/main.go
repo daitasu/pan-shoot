@@ -43,7 +43,7 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router.Handle("/", http.FileServer(http.Dir("./dist/")))
+	router.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("./frontend/dist/"))))
 
 	router.HandleFunc("/api/fake", handler.FakeHandler)
 	router.HandleFunc("/api/login", handler.LoginHandler(googleOauthConfig))

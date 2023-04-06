@@ -4,6 +4,9 @@ go 1.19
 
 require (
 	github.com/go-sql-driver/mysql v1.7.0
+	github.com/google/uuid v1.3.0
+	github.com/gorilla/mux v1.8.0
+	github.com/jaswdr/faker v1.16.0
 	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
 	golang.org/x/oauth2 v0.6.0
@@ -15,11 +18,8 @@ require (
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.7.1 // indirect
-	github.com/gorilla/mux v1.8.0 // indirect
-	github.com/jaswdr/faker v1.16.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/net v0.8.0 // indirect
 	golang.org/x/sys v0.6.0 // indirect

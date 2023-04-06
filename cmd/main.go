@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 
 	"github.com/daitasu/pan-shoot/internal/handler"
@@ -27,24 +28,25 @@ func main() {
 	var db = service.SetupDB()
 	defer db.Close()
 
-	mux := http.NewServeMux()
+	router := mux.NewRouter()
 
-	mux.Handle("/", http.FileServer(http.Dir("./dist/")))
+	router.Handle("/", http.FileServer(http.Dir("./dist/")))
 
-	mux.HandleFunc("/api/fake", handler.FakeHandler)
-	mux.HandleFunc("/api/login", handler.LoginHandler)
-	mux.HandleFunc("/api/me", handler.GetUserInfoHandler)
-	mux.HandleFunc("/auth/google/callback", handler.GoogleCallbackHandler)
+	router.HandleFunc("/api/fake", handler.FakeHandler)
+	router.HandleFunc("/api/login", handler.LoginHandler)
+	router.HandleFunc("/api/me", handler.GetUserInfoHandler)
+	router.HandleFunc("/auth/google/callback", handler.GoogleCallbackHandler)
 
 	// Create a new instance of the score service, repository and controller
 	scoreRepo := repository.NewMySQLRepo(db)
 	scoreService := service.NewRankService(scoreRepo)
 	scoreController := handler.NewController(scoreService)
 
-	mux.HandleFunc("/api/ranks", scoreController.GetRankingsHandler)
-	
+	router.HandleFunc("/api/ranks", scoreController.GetRankingsHandler).Methods("GET")
+	router.HandleFunc("/api/ranks", scoreController.PostRankingHandler).Methods("POST")
+
 	log.Printf("Listening: 8080 ...")
 	
-	log.Fatal(http.ListenAndServe(BaseUrl + ":8080", mux))
+	log.Fatal(http.ListenAndServe(BaseUrl + ":8080", router))
 
 }

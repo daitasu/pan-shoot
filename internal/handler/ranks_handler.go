@@ -58,7 +58,7 @@ func (c *Controller) PostRankingHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// Add ranking through service
-	err := c.Service.PostRank(ranking.Username, ranking.Score)
+	err := c.Service.PostRank(ranking.GoogleUserId, ranking.Username, ranking.Score)
 	if err != nil {
 		log.Printf("Error adding score: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)

@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
 // Repository is the interface for interacting with the ranks table.
 type Repository interface {
-	PostRank(username string, score int) error
+	PostRank(googleUserId string, username string, score int) error
 	GetRankList(limit int) ([]Rank, error)
 }
 
@@ -36,8 +37,9 @@ func NewMySQLRepo(db *sql.DB) *MySQLRepo {
 }
 
 // PostRank adds a new rank record to the database.
-func (r *MySQLRepo) PostRank(username string, score int) error {
-	_, err := r.db.Exec("INSERT INTO ranks (username, score) VALUES (?, ?)", username, score)
+func (r *MySQLRepo) PostRank(googleUserId string, username string, score int) error {
+
+	_, err := r.db.Exec("INSERT INTO ranks (id, google_user_id, username, score) VALUES (?, ?, ?, ?)", uuid.New(), googleUserId, username, score)
 	if err != nil {
 		return errors.Wrap(err, "failed to execute insert query")
 	}

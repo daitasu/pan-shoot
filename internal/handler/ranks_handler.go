@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/daitasu/pan-shoot/internal/repository"
 	"github.com/daitasu/pan-shoot/internal/service"
@@ -16,7 +17,6 @@ type Controller struct {
 
 type Rank struct {
 	ID        int       `json:"id"`
-	Username  string    `json:"username"`
 	Score     int       `json:"score"`
 }
 
@@ -58,9 +58,15 @@ func (c *Controller) PostRankingHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// Add ranking through service
-	err := c.Service.PostRank(ranking.GoogleUserId, ranking.Username, ranking.Score)
+	err := c.Service.PostRank(ranking.GoogleUserId, ranking.Score)
 	if err != nil {
 		log.Printf("Error adding score: %v", err)
+		if strings.HasPrefix(err.Error(), "Error 1062") {
+			w.WriteHeader(http.StatusBadRequest)
+			writeJSONError(w, "Deplicate error")
+			return
+		}
+
 		w.WriteHeader(http.StatusInternalServerError)
 		writeJSONError(w, "Internal server error")
 		return

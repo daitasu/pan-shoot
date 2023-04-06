@@ -2,21 +2,22 @@ package repository
 
 import (
 	"database/sql"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/pkg/errors"
+	"github.com/jaswdr/faker"
 )
 
 // Repository is the interface for interacting with the ranks table.
 type Repository interface {
-	PostRank(googleUserId string, username string, score int) error
+	PostRank(googleUserId string, score int) error
 	GetRankList(limit int) ([]Rank, error)
 }
 
 // Rank is the model for the ranks table.
 type Rank struct {
-	ID        int       `json:"id"`
+	ID        uuid.UUID `json:"id"`
 	GoogleUserId string `json:"googleUserId"`
 	Username  string    `json:"username"`
 	Score     int       `json:"score"`
@@ -37,11 +38,13 @@ func NewMySQLRepo(db *sql.DB) *MySQLRepo {
 }
 
 // PostRank adds a new rank record to the database.
-func (r *MySQLRepo) PostRank(googleUserId string, username string, score int) error {
+func (r *MySQLRepo) PostRank(googleUserId string, score int) error {
+	fake := faker.New()
+	var fakeUserName string = fake.Person().Name()
 
-	_, err := r.db.Exec("INSERT INTO ranks (id, google_user_id, username, score) VALUES (?, ?, ?, ?)", uuid.New(), googleUserId, username, score)
+	_, err := r.db.Exec("INSERT INTO ranks (id, google_user_id, username, score) VALUES (?, ?, ?, ?)", uuid.New(), googleUserId, fakeUserName, score)
 	if err != nil {
-		return errors.Wrap(err, "failed to execute insert query")
+		return err
 	}
 	return nil
 }
@@ -50,22 +53,24 @@ func (r *MySQLRepo) PostRank(googleUserId string, username string, score int) er
 func (r *MySQLRepo) GetRankList(limit int) ([]Rank, error) {
 	rows, err := r.db.Query("SELECT id, google_user_id, username, score, created_at, updated_at FROM ranks ORDER BY score DESC, created_at ASC LIMIT ?", limit)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to execute select query")
+		return nil, err
 	}
 	defer rows.Close()
 
 	var ranks []Rank
 	for rows.Next() {
 		var rank Rank
+		log.Println(rows)
 		err := rows.Scan(&rank.ID, &rank.GoogleUserId, &rank.Username, &rank.Score, &rank.CreatedAt, &rank.UpdatedAt)
 		if err != nil {
-			return nil, errors.Wrap(err, "failed to scan row")
+			return nil, err
 		}
+		log.Println(rank)
 		ranks = append(ranks, rank)
 	}
 
 	if err := rows.Err(); err != nil {
-		return nil, errors.Wrap(err, "failed to iterate over rows")
+		return nil, err
 	}
 
 	return ranks, nil

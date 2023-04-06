@@ -1,6 +1,6 @@
 CREATE TABLE ranks (
   id CHAR(36) NOT NULL,
-  google_user_id VARCHAR(255) NOT NULL,
+  google_user_id VARCHAR(255) NOT NULL UNIQUE,
   username VARCHAR(255) NOT NULL,
   score INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

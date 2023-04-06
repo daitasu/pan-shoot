@@ -3,11 +3,25 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 
 	"github.com/daitasu/pan-shoot/internal/handler"
 	"github.com/daitasu/pan-shoot/internal/repository"
 	"github.com/daitasu/pan-shoot/internal/service"
 )
+
+var BaseUrl string
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		 log.Fatal("Error loading .env file")
+	}
+
+	BaseUrl = os.Getenv("BASE_URL")
+}
 
 func main() {
 	var db = service.SetupDB()
@@ -30,6 +44,7 @@ func main() {
 	mux.HandleFunc("/api/ranks", scoreController.GetRankingsHandler)
 	
 	log.Printf("Listening: 8080 ...")
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	
+	log.Fatal(http.ListenAndServe(BaseUrl + ":8080", mux))
 
 }

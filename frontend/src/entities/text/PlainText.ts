@@ -35,4 +35,13 @@ export default class PlainText {
   getTextObject(): Text {
     return this.innerText;
   }
+
+  setText(text: string): void {
+    this.innerText.setText(text);
+  }
+
+  setPosition(position: { x?: number; y?: number }) {
+    if (!!position.x) this.innerText.x = position.x;
+    if (!!position.y) this.innerText.y = position.y;
+  }
 }

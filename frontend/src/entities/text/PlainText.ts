@@ -40,8 +40,10 @@ export default class PlainText {
     this.innerText.setText(text);
   }
 
-  setPosition(position: { x?: number; y?: number }) {
-    if (!!position.x) this.innerText.x = position.x;
-    if (!!position.y) this.innerText.y = position.y;
+  setFixedSize(position: { x?: number; y?: number }) {
+    const fixedWidth = position.x || this.innerText.width;
+    const fixedHeight = position.y || this.innerText.height;
+
+    this.innerText.setFixedSize(fixedWidth, fixedHeight);
   }
 }

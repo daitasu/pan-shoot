@@ -61,44 +61,37 @@ export class Mypage extends Phaser.Scene {
   }
 
   create() {
-    const rankTextTemplate =
-      "1. -\n\n2. -\n\n3. -\n\n4. -\n\n5. -\n\n6. -\n\n7. -\n\n8. -\n\n9. -\n\n10. -\n\n";
-
     // Ranking Title
-    const titleText = new PlainText(this, { x: 150, y: 50 }, "RANKING TOP 10", {
+    new PlainText(this, { x: 150, y: 50 }, "RANKING TOP 10", {
       style: {
         color: "#ffffff",
         fontSize: "30px",
       },
     });
-    // Ranking User
-    const rankText = new PlainText(this, { x: 60, y: 330 }, rankTextTemplate, {
-      style: {
-        color: "#ffffff",
-        fontSize: "20px",
-        align: "left",
-      },
-    });
-    const returnText = new ReturnTitleText(this);
+    // Return
+    new ReturnTitleText(this);
 
     setTimeout(() => {
-      new UserRecordText(this, this.profileName, this.score);
+      // Current Score
+      new UserRecordText(this, this.score);
 
-      let rankReplaceText = "";
-
-      rankTextTemplate.split("\n\n").forEach((value, i) => {
-        if (!this.ranks[i]) {
-          rankReplaceText += value + "\n\n";
-          return;
-        }
-        rankReplaceText += value.replace(
-          "-",
-          `${this.ranks[i].score} / ${this.ranks[i].username}\n\n`
+      for (let i = 0; i < 10; i++) {
+        const test = !!this.ranks[i]
+          ? `${this.ranks[i].score} / ${this.ranks[i].username}`
+          : "-";
+        const rankText = new PlainText(
+          this,
+          { x: 230, y: 100 + 40 * i },
+          `${i + 1}. ${test}`,
+          {
+            style: {
+              color: "#ffffff",
+              fontSize: "20px",
+              align: "left",
+            },
+          }
         );
-      });
-      rankText.setText(rankReplaceText);
-      if (this.ranks.length > 0) {
-        rankText.setPosition({ x: 180 });
+        rankText.setFixedSize({ x: 400 });
       }
     }, 2000);
   }

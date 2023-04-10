@@ -37,7 +37,7 @@ func NewMySQLRepo(db *sql.DB) *MySQLRepo {
 
 // PostRank adds a new rank record to the database.
 func (r *MySQLRepo) PostRank(username string, googleUserId string, score int) error {
-	_, err := r.db.Exec("INSERT INTO ranks (id, google_user_id, username, score) VALUES (?, ?, ?, ?)", uuid.New(), googleUserId, username, score)
+	_, err := r.db.Exec("INSERT INTO ranks (google_user_id, username, score) VALUES ($1, $2, $3)", googleUserId, username, score)
 	if err != nil {
 		return err
 	}
@@ -46,7 +46,7 @@ func (r *MySQLRepo) PostRank(username string, googleUserId string, score int) er
 
 // GetRankList returns a list of rank records from the database.
 func (r *MySQLRepo) GetRankList(limit int) ([]Rank, error) {
-	rows, err := r.db.Query("SELECT id, google_user_id, username, score, created_at, updated_at FROM ranks ORDER BY score DESC, created_at ASC LIMIT ?", limit)
+	rows, err := r.db.Query("SELECT id, google_user_id, username, score, created_at, updated_at FROM ranks ORDER BY score DESC, created_at ASC LIMIT $1", limit)
 	if err != nil {
 		return nil, err
 	}

@@ -1,17 +1,14 @@
 version: "3.8"
 
 services:
-  db:
-    image: mysql:8.0.32
-    restart: always
-    container_name: mysql_pan_shoot
+  postgres:
+    image: postgres:15.2
+    container_name: postgres_pan_shoot
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: devdb
-      MYSQL_USER: user1
-      MYSQL_PASSWORD: password
-      TZ: "Asia/Tokyo"
-    ports:
-      - 3306:3306
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=devdb
     volumes:
-      - ./docker/db/data:/var/lib/mysql
+      - ./docker/db/data:/var/lib/postgresql/data
+    ports:
+      - 15432:5432

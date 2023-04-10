@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"log"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 func SetupDB() *sql.DB {
-	dbURI := "user1:password@tcp(127.0.0.1:3306)/devdb?parseTime=true"
+	dbURI := "postgresql://root:password@localhost:15432/devdb?sslmode=disable"
 
-	db, err := sql.Open("mysql", dbURI)
+	db, err := sql.Open("postgres", dbURI)
 	if err != nil {
 		log.Fatalf("Failed to open DB: %v", err)
 	}

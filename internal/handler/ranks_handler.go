@@ -15,11 +15,6 @@ type Controller struct {
 	Service service.Service
 }
 
-type Rank struct {
-	ID        int       `json:"id"`
-	Score     int       `json:"score"`
-}
-
 type responseError struct {
 	Message string `json:"message"`
 }
@@ -58,7 +53,7 @@ func (c *Controller) PostRankingHandler(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// Add ranking through service
-	err := c.Service.PostRank(ranking.GoogleUserId, ranking.Score)
+	err := c.Service.PostRank(ranking.Username, ranking.GoogleUserId, ranking.Score)
 	if err != nil {
 		log.Printf("Error adding score: %v", err)
 		if strings.HasPrefix(err.Error(), "Error 1062") {

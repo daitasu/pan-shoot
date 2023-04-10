@@ -7,7 +7,7 @@ import (
 
 // Service is the interface for the score ranking service.
 type Service interface {
-	PostRank(google_user_id string, score int) error
+	PostRank(username string, google_user_id string, score int) error
 	GetRankList(limit int) ([]repository.Rank, error)
 }
 
@@ -24,7 +24,11 @@ func NewRankService(repo repository.Repository) *RankService {
 }
 
 // PostRank posts a new rank record to the repository.
-func (s *RankService) PostRank(googleUserId string, score int) error {
+func (s *RankService) PostRank(username string, googleUserId string, score int) error {
+	if username == "" {
+		return errors.New("username is required")
+	}
+
 	if googleUserId == "" {
 		return errors.New("google_user_id is required")
 	}
@@ -33,7 +37,7 @@ func (s *RankService) PostRank(googleUserId string, score int) error {
 		return errors.New("score must be a positive integer")
 	}
 
-	return s.repo.PostRank(googleUserId, score)
+	return s.repo.PostRank(username, googleUserId, score)
 }
 
 // GetRankList returns a list of rank records from the repository.

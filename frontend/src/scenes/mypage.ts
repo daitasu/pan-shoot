@@ -25,6 +25,17 @@ export class Mypage extends Phaser.Scene {
       const userInfoResponse = await axios.get("/api/me");
       if (userInfoResponse.data) {
         this.profileName = userInfoResponse.data.name;
+
+        const score = sessionStorage.getItem("score");
+
+        if (!!score && parseInt(score, 10)) {
+          // 記録を保存する
+          await axios.post("/api/ranks", {
+            googleUserId: userInfoResponse.data.id,
+            username: userInfoResponse.data.name,
+            score: parseInt(score, 10),
+          });
+        }
       }
       const ranksResponse = await axios.get<Rank[]>("/api/ranks");
       if (ranksResponse.data) {

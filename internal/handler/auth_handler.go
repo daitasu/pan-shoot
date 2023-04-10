@@ -3,14 +3,12 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
 	"golang.org/x/oauth2"
 	"google.golang.org/api/people/v1"
 )
-
 
 type UserProfile struct {
 	Email      string `json:"email"`
@@ -48,7 +46,7 @@ func GoogleCallbackHandler(googleOauthConfig *oauth2.Config) http.HandlerFunc {
 			Path:     "/",
 		}
 		http.SetCookie(w, &cookie)
-	
+
 		// Redirect the user to the homepage.
 		http.Redirect(w, r, "/static/?scene=mypage", http.StatusSeeOther)
 	}
@@ -56,7 +54,6 @@ func GoogleCallbackHandler(googleOauthConfig *oauth2.Config) http.HandlerFunc {
 
 func GetUserInfoHandler(w http.ResponseWriter, r *http.Request) {
 	user := r.Context().Value("user").(*people.Person)
-	log.Println(user)
 	var userProfile UserProfile
 
 	for _, name := range user.Names {

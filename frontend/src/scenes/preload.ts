@@ -19,9 +19,6 @@ export class Preload extends Phaser.Scene {
   }
 
   create() {
-    const BK_COLOR = "#101617";
-
-    this.cameras.main.setBackgroundColor(BK_COLOR);
     const mainVisual = this.add.image(400, 250, "main_visual");
     const startText: Text = this.add.text(
       400,

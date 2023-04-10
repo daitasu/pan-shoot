@@ -1,4 +1,5 @@
 ﻿import * as Phaser from "phaser";
+import CryptoJS from "crypto-js";
 import Enemy from "../entities/Enemy";
 import Map from "../entities/Map";
 import Player from "../entities/Player";
@@ -172,7 +173,11 @@ export class Game extends Phaser.Scene {
     const background = this.add.rectangle(0, 0, 800, 600, 0x333333, 0.6);
     background.setScale(2);
 
-    sessionStorage.setItem("score", String(this.gameManager.getScore()));
+    const cipherScore = CryptoJS.AES.encrypt(
+      String(this.gameManager.getScore()),
+      "secret"
+    ).toString();
+    sessionStorage.setItem("score", cipherScore);
 
     new GameOverText(this);
     new RetryText(this);

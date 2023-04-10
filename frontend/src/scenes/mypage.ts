@@ -1,5 +1,5 @@
-import * as Phaser from "phaser";
-import { BK_COLOR } from "../constants";
+import Phaser from "phaser";
+import CryptoJS from "crypto-js";
 import ReturnTitleText from "../entities/text/RetrunTitleText";
 import UserRecordText from "../entities/text/UserRecordText";
 import axios from "axios";
@@ -15,10 +15,12 @@ type Rank = {
 export class Mypage extends Phaser.Scene {
   private profileName: string;
   private ranks: Rank[];
+  private score: number;
 
   async init() {
     this.profileName = "";
     this.ranks = [];
+    this.score = 0;
 
     try {
       // 既にログイン済みなら情報を流し込む
@@ -26,15 +28,22 @@ export class Mypage extends Phaser.Scene {
       if (userInfoResponse.data) {
         this.profileName = userInfoResponse.data.name;
 
-        const score = sessionStorage.getItem("score");
+        const cipherScore = sessionStorage.getItem("score");
+        if (cipherScore) {
+          const score = CryptoJS.AES.decrypt(cipherScore, "secret").toString(
+            CryptoJS.enc.Utf8
+          );
 
-        if (!!score && parseInt(score, 10)) {
-          // 記録を保存する
-          await axios.post("/api/ranks", {
-            googleUserId: userInfoResponse.data.id,
-            username: userInfoResponse.data.name,
-            score: parseInt(score, 10),
-          });
+          if (!!score && parseInt(score, 10)) {
+            this.score = parseInt(score, 10);
+            // 記録を保存する
+            await axios.post("/api/ranks", {
+              googleUserId: userInfoResponse.data.id,
+              username: userInfoResponse.data.name,
+              score: this.score,
+            });
+            sessionStorage.clear();
+          }
         }
       }
       const ranksResponse = await axios.get<Rank[]>("/api/ranks");
@@ -42,7 +51,7 @@ export class Mypage extends Phaser.Scene {
         this.ranks = ranksResponse.data;
       }
     } catch (err) {
-      if (err.response.status === 401) {
+      if (err.response?.status === 401) {
         // Google ログインする
         window.location.href = "/api/login";
       } else {
@@ -52,8 +61,6 @@ export class Mypage extends Phaser.Scene {
   }
 
   create() {
-    this.cameras.main.setBackgroundColor(BK_COLOR);
-
     const rankTextTemplate =
       "1. -\n\n2. -\n\n3. -\n\n4. -\n\n5. -\n\n6. -\n\n7. -\n\n8. -\n\n9. -\n\n10. -\n\n";
 
@@ -75,7 +82,7 @@ export class Mypage extends Phaser.Scene {
     const returnText = new ReturnTitleText(this);
 
     setTimeout(() => {
-      new UserRecordText(this, this.profileName);
+      new UserRecordText(this, this.profileName, this.score);
 
       let rankReplaceText = "";
 

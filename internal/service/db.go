@@ -8,9 +8,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func SetupDB() *sql.DB {
-	dbURI := "postgresql://root:password@localhost:15432/devdb?sslmode=disable"
-
+func SetupDB(dbURI string) *sql.DB {
 	db, err := sql.Open("postgres", dbURI)
 	if err != nil {
 		log.Fatalf("Failed to open DB: %v", err)

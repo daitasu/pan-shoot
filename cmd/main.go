@@ -18,15 +18,27 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		 log.Fatal("Error loading .env file")
+	appEnv := os.Getenv("APP_ENV")
+
+	var envFile string
+	if appEnv == "local" {
+	} else if appEnv == "production" {
+		envFile = ".env.production"
+	} else {
+		envFile = ".env.local"
 	}
-	BaseUrl := os.Getenv("BASE_URL")
+
+	err := godotenv.Load(envFile)
+	if err != nil {
+		log.Fatalf("Error loading %s file", envFile)
+	}
+
+	// BaseUrl := os.Getenv("BASE_URL")
 	ClientID := os.Getenv("GOOGLE_OAUTH_CLIENT_ID")
 	ClientSecret := os.Getenv("GOOGLE_OAUTH_CLIENT_SECRET")
 	RedirectURL := os.Getenv("GOOGLE_OAUTH_REDIRECT_URL")
-	
+	dbURI := os.Getenv("DB_URL")
+
 	googleOauthConfig := &oauth2.Config{
 		ClientID:     ClientID,
 		ClientSecret: ClientSecret,
@@ -38,7 +50,7 @@ func main() {
 		Endpoint: google.Endpoint,
 	}
 
-	var db = service.SetupDB()
+	var db = service.SetupDB(dbURI)
 	defer db.Close()
 
 	router := mux.NewRouter()
@@ -60,6 +72,6 @@ func main() {
 	router.Handle("/api/ranks", middleware.AuthMiddleware(http.HandlerFunc(scoreController.PostRankingHandler), googleOauthConfig)).Methods("POST")
 
 	log.Printf("Listening: 8080 ...")
-	log.Fatal(http.ListenAndServe(BaseUrl + ":8080", router))
+	log.Fatal(http.ListenAndServe(":8080", router))
 
 }

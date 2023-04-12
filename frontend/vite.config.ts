@@ -8,8 +8,10 @@ export default defineConfig({
   root,
   envDir: "../",
   publicDir: "../public",
+  base: "/static",
   build: {
     outDir: "../dist",
+    assetsDir: "assets",
     rollupOptions: {
       input: {
         main: resolve(root, "index.html"),
